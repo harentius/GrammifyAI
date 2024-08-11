@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "SelectionManager.substring(string:fromIndex:toIndex:):SelectionManager.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "string.count ">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

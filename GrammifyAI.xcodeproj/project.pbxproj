@@ -1,0 +1,426 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07946A842C5F763700AE2FEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A832C5F763700AE2FEE /* Assets.xcassets */; };
+		07946A872C5F763700AE2FEE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A862C5F763700AE2FEE /* Preview Assets.xcassets */; };
+		07946A9C2C5F777600AE2FEE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */; };
+		07946AA32C5F7B6D00AE2FEE /* SuggestionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */; };
+		07946AA42C5F7B6D00AE2FEE /* GrammifyAIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946A9E2C5F7B6D00AE2FEE /* GrammifyAIApp.swift */; };
+		07946AA52C5F7B6D00AE2FEE /* SelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946A9F2C5F7B6D00AE2FEE /* SelectionManager.swift */; };
+		07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA02C5F7B6D00AE2FEE /* AppState.swift */; };
+		07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */; };
+		07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA22C5F7B6D00AE2FEE /* Constants.swift */; };
+		07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 07B5B7E62C654EBA0051753F /* OpenAI */; };
+		07DC23CD2C67BFFC00DC5E7E /* OpenAIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */; };
+		07DC23CF2C67C04500DC5E7E /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */; };
+		07DC23D32C67C56900DC5E7E /* MenuBarContentUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23D22C67C56900DC5E7E /* MenuBarContentUI.swift */; };
+		07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		07946A7C2C5F763700AE2FEE /* GrammifyAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrammifyAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		07946A832C5F763700AE2FEE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		07946A862C5F763700AE2FEE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		07946A882C5F763700AE2FEE /* GrammifyAI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GrammifyAI.entitlements; sourceTree = "<group>"; };
+		07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionUI.swift; sourceTree = "<group>"; };
+		07946A9E2C5F7B6D00AE2FEE /* GrammifyAIApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrammifyAIApp.swift; sourceTree = "<group>"; };
+		07946A9F2C5F7B6D00AE2FEE /* SelectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionManager.swift; sourceTree = "<group>"; };
+		07946AA02C5F7B6D00AE2FEE /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsUI.swift; sourceTree = "<group>"; };
+		07946AA22C5F7B6D00AE2FEE /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		07946AA92C602E6400AE2FEE /* GrammifyAIDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GrammifyAIDebug.entitlements; sourceTree = "<group>"; };
+		07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIHelper.swift; sourceTree = "<group>"; };
+		07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		07DC23D22C67C56900DC5E7E /* MenuBarContentUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentUI.swift; sourceTree = "<group>"; };
+		07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreconditionsUI.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		07946A792C5F763700AE2FEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */,
+				07946A9C2C5F777600AE2FEE /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		07946A732C5F763600AE2FEE = {
+			isa = PBXGroup;
+			children = (
+				07946A7E2C5F763700AE2FEE /* GrammifyAI */,
+				07946A7D2C5F763700AE2FEE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		07946A7D2C5F763700AE2FEE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				07946A7C2C5F763700AE2FEE /* GrammifyAI.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		07946A7E2C5F763700AE2FEE /* GrammifyAI */ = {
+			isa = PBXGroup;
+			children = (
+				07946AA02C5F7B6D00AE2FEE /* AppState.swift */,
+				07946A832C5F763700AE2FEE /* Assets.xcassets */,
+				07946AA22C5F7B6D00AE2FEE /* Constants.swift */,
+				07946A882C5F763700AE2FEE /* GrammifyAI.entitlements */,
+				07946A9E2C5F7B6D00AE2FEE /* GrammifyAIApp.swift */,
+				07946AA92C602E6400AE2FEE /* GrammifyAIDebug.entitlements */,
+				07DC23D22C67C56900DC5E7E /* MenuBarContentUI.swift */,
+				07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */,
+				07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */,
+				07946A852C5F763700AE2FEE /* Preview Content */,
+				07946A9F2C5F7B6D00AE2FEE /* SelectionManager.swift */,
+				07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */,
+				07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */,
+				07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */,
+			);
+			path = GrammifyAI;
+			sourceTree = "<group>";
+		};
+		07946A852C5F763700AE2FEE /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				07946A862C5F763700AE2FEE /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		07946A7B2C5F763700AE2FEE /* GrammifyAI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07946A8B2C5F763700AE2FEE /* Build configuration list for PBXNativeTarget "GrammifyAI" */;
+			buildPhases = (
+				07946A782C5F763700AE2FEE /* Sources */,
+				07946A792C5F763700AE2FEE /* Frameworks */,
+				07946A7A2C5F763700AE2FEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GrammifyAI;
+			packageProductDependencies = (
+				07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */,
+				07B5B7E62C654EBA0051753F /* OpenAI */,
+			);
+			productName = GrammifyAI;
+			productReference = 07946A7C2C5F763700AE2FEE /* GrammifyAI.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		07946A742C5F763600AE2FEE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					07946A7B2C5F763700AE2FEE = {
+						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1540;
+					};
+				};
+			};
+			buildConfigurationList = 07946A772C5F763600AE2FEE /* Build configuration list for PBXProject "GrammifyAI" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 07946A732C5F763600AE2FEE;
+			packageReferences = (
+				07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */,
+			);
+			productRefGroup = 07946A7D2C5F763700AE2FEE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				07946A7B2C5F763700AE2FEE /* GrammifyAI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		07946A7A2C5F763700AE2FEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07946A872C5F763700AE2FEE /* Preview Assets.xcassets in Resources */,
+				07946A842C5F763700AE2FEE /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		07946A782C5F763700AE2FEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07946AA52C5F7B6D00AE2FEE /* SelectionManager.swift in Sources */,
+				07DC23D32C67C56900DC5E7E /* MenuBarContentUI.swift in Sources */,
+				07DC23CD2C67BFFC00DC5E7E /* OpenAIHelper.swift in Sources */,
+				07946AA32C5F7B6D00AE2FEE /* SuggestionUI.swift in Sources */,
+				07946AA42C5F7B6D00AE2FEE /* GrammifyAIApp.swift in Sources */,
+				07DC23CF2C67C04500DC5E7E /* SettingsManager.swift in Sources */,
+				07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */,
+				07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */,
+				07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */,
+				07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		07946A892C5F763700AE2FEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		07946A8A2C5F763700AE2FEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		07946A8C2C5F763700AE2FEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = GrammifyAI/GrammifyAIDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"GrammifyAI/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		07946A8D2C5F763700AE2FEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = GrammifyAI/GrammifyAI.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"GrammifyAI/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		07946A772C5F763600AE2FEE /* Build configuration list for PBXProject "GrammifyAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07946A892C5F763700AE2FEE /* Debug */,
+				07946A8A2C5F763700AE2FEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07946A8B2C5F763700AE2FEE /* Build configuration list for PBXNativeTarget "GrammifyAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07946A8C2C5F763700AE2FEE /* Debug */,
+				07946A8D2C5F763700AE2FEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
+		07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MacPaw/OpenAI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		07B5B7E62C654EBA0051753F /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 07946A742C5F763600AE2FEE /* Project object */;
+}
