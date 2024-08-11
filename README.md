@@ -19,11 +19,11 @@ Suggestion popup:
 <img width="600" alt="Screenshot 2024-08-11 at 16 31 50" src="https://github.com/user-attachments/assets/2f568df8-ab78-4a97-be3d-af208af0be7e">
 
 ## Installation
-  1. Download the latest release and move it to Applications folder on your mac.
-  2. To run the application right click on GrammifyAI app name name and select "Open" and allow to open it
-  3. Add an application Accessibility permissions: Open "System Settings" -> "Privacy & Security" -> "Accessibility" and add the GrammifyAI to the list.
-  4. Add your OpenAI API key to Settings
-  5. Select the text in any application and press ⌘ + U or your custom shortcut
+  1. Download the latest release and move it to the Applications folder on your Mac.
+  2. To run the application, right-click on the GrammifyAI app name and select "Open," then allow it to open.
+  3. To add application Accessibility permissions, open "System Settings" navigate to "Privacy & Security" select "Accessibility" and add GrammifyAI to the list.
+  4. Add your OpenAI API key in the Settings.
+  5. Select the text in any application and press ⌘ + U or your custom shortcut.
 
 ## Update
   After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.
