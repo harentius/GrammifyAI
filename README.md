@@ -29,7 +29,7 @@ Suggestion popup:
   After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.
 
 ## Known successfull use cases
-I use the application in *Slack*, *Chrome* and *Notion*.  
+I use the GrammifyAI application in *Slack*, *Chrome* and *Notion*.  
 
 ## Known limitations
 It doesn't work in *Google Docs*
