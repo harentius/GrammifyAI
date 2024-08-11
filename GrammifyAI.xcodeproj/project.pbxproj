@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		075C39CC2C68F13F00C8E193 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075C39CB2C68F13F00C8E193 /* Result.swift */; };
+		075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075C39CD2C68F2CA00C8E193 /* AXError.swift */; };
 		07946A842C5F763700AE2FEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A832C5F763700AE2FEE /* Assets.xcassets */; };
 		07946A872C5F763700AE2FEE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A862C5F763700AE2FEE /* Preview Assets.xcassets */; };
 		07946A9C2C5F777600AE2FEE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		075C39CB2C68F13F00C8E193 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		075C39CD2C68F2CA00C8E193 /* AXError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXError.swift; sourceTree = "<group>"; };
 		07946A7C2C5F763700AE2FEE /* GrammifyAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrammifyAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07946A832C5F763700AE2FEE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		07946A862C5F763700AE2FEE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */,
 				07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */,
 				07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */,
+				075C39CB2C68F13F00C8E193 /* Result.swift */,
+				075C39CD2C68F2CA00C8E193 /* AXError.swift */,
 			);
 			path = GrammifyAI;
 			sourceTree = "<group>";
@@ -185,9 +191,11 @@
 				07946AA42C5F7B6D00AE2FEE /* GrammifyAIApp.swift in Sources */,
 				07DC23CF2C67C04500DC5E7E /* SettingsManager.swift in Sources */,
 				07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */,
+				075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */,
 				07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */,
 				07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */,
 				07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */,
+				075C39CC2C68F13F00C8E193 /* Result.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,7 +341,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -363,7 +371,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
