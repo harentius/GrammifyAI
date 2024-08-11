@@ -1,11 +1,5 @@
 import SwiftUI
 
-//let suggestion = OpenAIHelper.correctWritting(text: te) { result in
-//    NSPasteboard.general.clearContents() // Clear existing content
-//    NSPasteboard.general.setString(result.output, forType: .string)
-//}
-
-
 struct SuggestionUI: View {
     @StateObject var appState: AppState
     @Environment(\.controlActiveState) var controlActiveState
