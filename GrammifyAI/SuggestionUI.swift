@@ -7,8 +7,8 @@ struct SuggestionUI: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if (appState.selectedTextNotFound) {
-                Text("Can't read your text selection")
+            if (appState.isAccessibilityAPIError) {
+                Text(appState.accessibilityAPIError)
                     .foregroundStyle(.red)
             } else if (appState.isOpenAIError) {
                 Text(appState.openAIError).foregroundStyle(.red)
@@ -35,7 +35,7 @@ struct SuggestionUI: View {
                 let result = await openAIHelper.correctWritting(text: newState)
                 appState.isOpenAIRequestPending = false
 
-                if result.status == Result.STATUS_SUCCESS {
+                if result.isSuccessful() {
                     appState.suggestion = result.output
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(appState.suggestion, forType: .string)
@@ -50,7 +50,6 @@ struct SuggestionUI: View {
 
 #Preview {
     let appState = AppState()
-    appState.selectedTextNotFound = false
     appState.originalText = "I a original text"
     appState.suggestion = "I am corrected text"
     appState.isOpenAIRequestPending = true

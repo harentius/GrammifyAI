@@ -18,24 +18,23 @@ final class AppState: ObservableObject {
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
     @Published var openAIError = ""
-    
-    @Published var selectedTextNotFound = false
+
+    @Published var isAccessibilityAPIError = false
+    @Published var accessibilityAPIError = ""
 
     init() {
         checkPreconditions()
         KeyboardShortcuts.onKeyDown(for: .improveWriting) { [self] in
             var selectionManager = SelectionManager()
-            let text = selectionManager.getSelectedText()
+            let selectedTextResult = selectionManager.getSelectedText()
 
-            selectedTextNotFound = false
-            showSuggestionUI = true
-
-            if text == nil {
-                selectedTextNotFound = true
-                return
+            if selectedTextResult.isSuccessful() {
+                originalText = selectedTextResult.output
+                showSuggestionUI = true
+            } else {
+                isAccessibilityAPIError = true
+                accessibilityAPIError = selectedTextResult.error
             }
-
-            originalText = text!
         }
     }
 
