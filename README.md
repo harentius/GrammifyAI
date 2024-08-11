@@ -33,3 +33,9 @@ I use the application in *Slack*, *Chrome* and *Notion*.
 
 ## Known limitations
 It doesn't work in *Google Docs*
+
+## Motivation for implementing this applications
+I would like to check my writing as easily as possible, especially in a new language for me (German).  
+There are awesome applications like Grammarly that do a very similar job,  
+but unfortunately, they only support English, and the AI capabilities can be a bit expensive.  
+I would also like to perform the check with a simple key press and minimal UI interaction.
