@@ -5,7 +5,8 @@ An AI-driven grammar and spell checker for macOS that works everywhere and with 
 The usage of GrammifyAI is as simple as selecting the text and pressing a shortcut (⌘ + U or custom).  
 This will bring you the improvement suggestion popup and will copy the suggestion to the clipboard.
 
-Thanks to the macOS accessibility API, GrammifyAI can work with text in any web or native application.
+Thanks to the macOS accessibility API, GrammifyAI can work with text in any web or native application.  
+Thanks to OpenAI, GrammifyAI also improves your writting and language style.
 
 https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
 
