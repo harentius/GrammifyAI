@@ -1,7 +1,6 @@
 # GrammifyAI
 
-GrammifyAI is a minimalist macOS utility for improving your writing in almost every language, thanks to OpenAI.
-It uses the OpenAI API with your API key.
+GrammifyAI is an AI-driven grammar and spell checker for macOS that works everywhere and with any language.
 
 GrammifyAI can access your text in nearly any application, as it utilizes the Accessibility API.
 
