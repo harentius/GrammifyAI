@@ -28,7 +28,7 @@ Suggestion popup:
 ## Update
   After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.
 
-## Known successfull use cases
+## Known successful use cases
 I use the GrammifyAI application in *Slack*, *Chrome* and *Notion*.  
 
 ## Known limitations
