@@ -1,8 +1,8 @@
 # GrammifyAI
 
-GrammifyAI is an AI-driven grammar and spell checker for macOS that works everywhere and with any language.
+An AI-driven grammar and spell checker for macOS that works everywhere and with any language.
 
-GrammifyAI can access your text in nearly any application, as it utilizes the Accessibility API.
+It can access your text in nearly any application, as it utilizes the Accessibility API.
 
 The usage of GrammifyAI is as simple as selecting the text and pressing shortcut (⌘ + U or custom).  
 This will show you the improvement suggestion popup and will copy the suggestion to the clipboard.
