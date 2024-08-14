@@ -1,5 +1,5 @@
 {
-  "originHash" : "fd2163cd26dba299065e9445ee632957199c31eb0801b62af3684167cb69cc64",
+  "originHash" : "4d3c31728539539acf4ca5f0d2248b76cdf7805168a66155b276051096ca4da1",
   "pins" : [
     {
       "identity" : "keyboardshortcuts",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "843e087929aa806adb611dbca93f9a4a7f28be04",
         "version" : "0.3.0"
+      }
+    },
+    {
+      "identity" : "swiftdiff5",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kvasnikoff/SwiftDiff5",
+      "state" : {
+        "branch" : "master",
+        "revision" : "fb365b197b01047067e74f50c58f914254540c3b"
       }
     }
   ],

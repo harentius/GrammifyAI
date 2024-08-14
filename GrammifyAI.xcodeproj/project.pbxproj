@@ -19,6 +19,8 @@
 		07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */; };
 		07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA22C5F7B6D00AE2FEE /* Constants.swift */; };
 		07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 07B5B7E62C654EBA0051753F /* OpenAI */; };
+		07C6E61E2C6BD05900ACC7F0 /* DiffChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C6E61D2C6BD05900ACC7F0 /* DiffChecker.swift */; };
+		07C6E6292C6C013B00ACC7F0 /* SwiftDiff in Frameworks */ = {isa = PBXBuildFile; productRef = 07C6E6282C6C013B00ACC7F0 /* SwiftDiff */; };
 		07DC23CD2C67BFFC00DC5E7E /* OpenAIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */; };
 		07DC23CF2C67C04500DC5E7E /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */; };
 		07DC23D32C67C56900DC5E7E /* MenuBarContentUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23D22C67C56900DC5E7E /* MenuBarContentUI.swift */; };
@@ -39,6 +41,7 @@
 		07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsUI.swift; sourceTree = "<group>"; };
 		07946AA22C5F7B6D00AE2FEE /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		07946AA92C602E6400AE2FEE /* GrammifyAIDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GrammifyAIDebug.entitlements; sourceTree = "<group>"; };
+		07C6E61D2C6BD05900ACC7F0 /* DiffChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffChecker.swift; sourceTree = "<group>"; };
 		07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIHelper.swift; sourceTree = "<group>"; };
 		07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		07DC23D22C67C56900DC5E7E /* MenuBarContentUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentUI.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 			files = (
 				07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */,
 				07946A9C2C5F777600AE2FEE /* KeyboardShortcuts in Frameworks */,
+				07C6E6292C6C013B00ACC7F0 /* SwiftDiff in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +97,7 @@
 				07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */,
 				075C39CB2C68F13F00C8E193 /* Result.swift */,
 				075C39CD2C68F2CA00C8E193 /* AXError.swift */,
+				07C6E61D2C6BD05900ACC7F0 /* DiffChecker.swift */,
 			);
 			path = GrammifyAI;
 			sourceTree = "<group>";
@@ -124,6 +129,7 @@
 			packageProductDependencies = (
 				07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */,
 				07B5B7E62C654EBA0051753F /* OpenAI */,
+				07C6E6282C6C013B00ACC7F0 /* SwiftDiff */,
 			);
 			productName = GrammifyAI;
 			productReference = 07946A7C2C5F763700AE2FEE /* GrammifyAI.app */;
@@ -157,6 +163,7 @@
 			packageReferences = (
 				07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */,
+				07C6E6272C6C013B00ACC7F0 /* XCRemoteSwiftPackageReference "SwiftDiff5" */,
 			);
 			productRefGroup = 07946A7D2C5F763700AE2FEE /* Products */;
 			projectDirPath = "";
@@ -194,6 +201,7 @@
 				075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */,
 				07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */,
 				07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */,
+				07C6E61E2C6BD05900ACC7F0 /* DiffChecker.swift in Sources */,
 				07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */,
 				075C39CC2C68F13F00C8E193 /* Result.swift in Sources */,
 			);
@@ -419,6 +427,14 @@
 				minimumVersion = 0.3.0;
 			};
 		};
+		07C6E6272C6C013B00ACC7F0 /* XCRemoteSwiftPackageReference "SwiftDiff5" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kvasnikoff/SwiftDiff5";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -431,6 +447,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */;
 			productName = OpenAI;
+		};
+		07C6E6282C6C013B00ACC7F0 /* SwiftDiff */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07C6E6272C6C013B00ACC7F0 /* XCRemoteSwiftPackageReference "SwiftDiff5" */;
+			productName = SwiftDiff;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

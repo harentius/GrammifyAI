@@ -17,9 +17,12 @@ struct SuggestionUI: View {
             } else {
                 Text(appState.originalText).foregroundStyle(.yellow)
                 Divider()
-                Text(appState.suggestion).foregroundStyle(.green)
+
+                Text(DiffChecker.diffCheck(incorrectString: appState.originalText, correctString: appState.suggestion))
                 Divider()
-                Text("Suggestion is copied to the clipboard").italic()
+                Text("Suggestion is copied to the clipboard")
+                    .italic()
+                    .foregroundColor(.gray)
             }
         }.padding()
         .onChange(of: controlActiveState, initial: true) { oldState, newState in
@@ -28,6 +31,11 @@ struct SuggestionUI: View {
             }
         }
         .onChange(of: appState.originalText, initial: true) { oldState, newState in
+
+            if appState.preventAPIInteraction {
+                return
+            }
+
             appState.cleanOpenAIRequestState()
 
             Task {
@@ -50,9 +58,10 @@ struct SuggestionUI: View {
 
 #Preview {
     let appState = AppState()
-    appState.originalText = "I a original text"
+    appState.originalText = "I a supor original text"
     appState.suggestion = "I am corrected text"
-    appState.isOpenAIRequestPending = true
+    appState.isOpenAIRequestPending = false
+    appState.preventAPIInteraction = true
 
     return SuggestionUI(appState: appState)
         .frame(width: 600, height: 300)

@@ -18,6 +18,7 @@ final class AppState: ObservableObject {
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
     @Published var openAIError = ""
+    @Published var preventAPIInteraction = false
 
     @Published var isAccessibilityAPIError = false
     @Published var accessibilityAPIError = ""
