@@ -5,7 +5,11 @@ struct MenuBarContentUI: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("GrammifyAI")
+            HStack {
+                Text("GrammifyAI")
+                Text("\(getAppVersion())")
+                    .foregroundColor(.gray)
+            }
             Divider().padding([.bottom], 10)
 
             PreconditionsUI(appState: appState)
@@ -18,6 +22,13 @@ struct MenuBarContentUI: View {
                 NSApp.terminate(nil)
             }
         }.padding()
+    }
+
+    func getAppVersion() -> String {
+        if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            return appVersion
+        }
+        return "Unknown"
     }
 }
 

@@ -1,5 +1,9 @@
 # 0.2.0
-**Features:**
+**New Features:**
+ * Display version number
+ 
+# 0.2.0
+**New Features:**
  * Better visualize string differences 
  
 # 0.1.0
