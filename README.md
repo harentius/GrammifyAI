@@ -9,7 +9,7 @@ Thanks to the macOS accessibility API, GrammifyAI can work with text in any **we
 Thanks to **OpenAI**, GrammifyAI also improves your writting and language style.  
 <img width="600" alt="Screenshot 2024-08-14 at 20 20 12" src="https://github.com/user-attachments/assets/9155695c-49d6-44ad-ba07-71b2e4085982">
 
-GrammifyAI uses your OpenAI keys, so no quota or limits from GrammifyAI side: use according to OpenAI billing.
+GrammifyAI utilizes your OpenAI API key, so there are no quotas or limits from the GrammifyAI side. Usage will be according to OpenAI's billing.
 
 ## Installation
   1. Download the latest [release](https://github.com/harentius/GrammifyAI/releases) and move it to the Applications folder on your Mac.
