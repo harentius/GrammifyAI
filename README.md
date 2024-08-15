@@ -12,15 +12,15 @@ Thanks to **OpenAI**, GrammifyAI also improves your writting and language style.
 GrammifyAI uses your OpenAI keys, so no quota or limits from GrammifyAI side: use according to OpenAI billing.
 
 ## Installation
-  1. Download the latest release and move it to the Applications folder on your Mac.
-  2. To run the application, right-click on the GrammifyAI app name and select "Open," then allow it to open.
-  3. To add application Accessibility permissions, open "System Settings" navigate to "Privacy & Security" select "Accessibility" and add GrammifyAI to the list.
-  4. Add your OpenAI API key in the Settings.
+  1. Download the latest [release](https://github.com/harentius/GrammifyAI/releases) and move it to the Applications folder on your Mac.
+  2. To run the application, right-click on the GrammifyAI app name and select "Open," then grant permission to open it.
+  3. To add accessibility permissions for the application, open "System Settings," navigate to "Privacy & Security," select "Accessibility," and add GrammifyAI to the list.
+  4. Add your OpenAI API key in the GrammifyAI settings.
   5. Select the text in any application and press ⌘ + U or your custom shortcut.
 
 ## Update
-  After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.  
-  You might need to perform step 2 from installation process again.
+  1. After installing a new version, you must remove GrammifyAI from Accessibility permissions and grant them again.
+  2. You may need to perform step 2 of the installation process again.
 
 ## Known successful use cases
 I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, and any standard web form.  
