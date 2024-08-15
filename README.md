@@ -33,7 +33,7 @@ I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, an
 https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
 
 ## Appendix
-**Motivation for implementing this applications**
+**Motivation for implementing this applications**  
 I am learning German, and it is challenging.  
 My thinking patterns differ from those of typical native speakers.  
 I am trying to receive feedback on my writing as quickly as possible, so I have implemented a tool to check it.
