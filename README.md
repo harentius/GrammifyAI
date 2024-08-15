@@ -5,18 +5,11 @@ An AI-driven grammar and spell checker for macOS that works everywhere and with 
 The usage of GrammifyAI is as simple as selecting the text and pressing a shortcut (⌘ + U or custom).  
 This will bring you the improvement suggestion popup and will copy the suggestion to the clipboard.
 
-Thanks to the macOS accessibility API, GrammifyAI can work with text in any web or native application.  
-Thanks to OpenAI, GrammifyAI also improves your writting and language style.
+Thanks to the macOS accessibility API, GrammifyAI can work with text in any **web** or **native** application.  
+Thanks to **OpenAI**, GrammifyAI also improves your writting and language style.  
+<img width="600" alt="Screenshot 2024-08-14 at 20 20 12" src="https://github.com/user-attachments/assets/9155695c-49d6-44ad-ba07-71b2e4085982">
 
-https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
-
-Settings Screen:
-
-<img width="324" alt="Screenshot 2024-08-11 at 16 29 19" src="https://github.com/user-attachments/assets/b17443bd-22ce-4307-b54d-d86e29e5e9eb">
-
-Suggestion popup:
-
-<img width="600" alt="Screenshot 2024-08-11 at 16 31 50" src="https://github.com/user-attachments/assets/2f568df8-ab78-4a97-be3d-af208af0be7e">
+GrammifyAI uses your OpenAI keys, so no quota or limits from GrammifyAI side: use according to OpenAI billing.
 
 ## Installation
   1. Download the latest release and move it to the Applications folder on your Mac.
@@ -26,13 +19,17 @@ Suggestion popup:
   5. Select the text in any application and press ⌘ + U or your custom shortcut.
 
 ## Update
-  After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.
+  After installing a new version you need to remove the GrammifyAI from Accessibility permissions and give them again.  
+  You might need to perform step 2 from installation process again.
 
 ## Known successful use cases
-I use the GrammifyAI application in *Slack*, *Chrome* and *Notion*.  
+I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, and any standard web form.  
 
 ## Known limitations
 It doesn't work in *Google Docs*
+
+## Quick Demo
+https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
 
 ## Motivation for implementing this applications
 I would like to check my writing as easily as possible, especially in a new language for me (German).  
