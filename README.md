@@ -26,13 +26,17 @@ GrammifyAI uses your OpenAI keys, so no quota or limits from GrammifyAI side: us
 I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, and any standard web form.  
 
 ## Known limitations
-It doesn't work in *Google Docs*
+  * It doesn't work in *Google Docs*
+  * As it uses OpenAI API, suggestion on sensitive topics can differ from original meaning
 
 ## Quick Demo
 https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
 
-## Motivation for implementing this applications
-I would like to check my writing as easily as possible, especially in a new language for me (German).  
-There are awesome applications like Grammarly that do a very similar job,  
-but unfortunately, they only support English, and the AI capabilities can be a bit expensive.  
+## Appendix
+**Motivation for implementing this applications**
+I am learning German, and it is challenging.  
+My thinking patterns differ from those of typical native speakers.  
+I am trying to receive feedback on my writing as quickly as possible, so I have implemented a tool to check it.
+There are great applications like Grammarly that do a similar job, but unfortunately, they only support English,  
+and their AI capabilities can be a bit expensive and not as good as OpenAI or ChatGPT.  
 I would also like to perform the check with a simple key press and minimal UI interaction.
