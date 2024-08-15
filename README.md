@@ -22,6 +22,12 @@ GrammifyAI utilizes your OpenAI API key, so there are no quotas or limits from t
   1. After installing a new version, you must remove GrammifyAI from Accessibility permissions and grant them again.
   2. You may need to perform step 2 of the installation process again.
 
+## Usage
+  1. Select the text you want to enhance.
+  2. Press ⌘ + U or your custom combination if you have changed it.
+  3. You may close the window if you want by pressing the cross symbol or ⌘ + W.
+  4. You can insert the corrected text using ⌘ + V.
+     
 ## Known successful use cases
 I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, and any standard web form.  
 
