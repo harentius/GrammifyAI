@@ -36,11 +36,11 @@ https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
  1. **Motivation for implementing this applications**  
 I am learning German, and it is challenging.  
 My thinking patterns differ from those of typical native speakers.  
-I am trying to receive feedback on my writing as quickly as possible, so I have implemented a tool to check it.
+I am trying to receive feedback on my writing as quickly and easily as possible, so I have implemented a one-shortcut tool to check it.
+I also want to understand corrections quickly, without long explanations from ChatGPT, and without the need to go to the ChatGPT window at all. 
 There are great applications like Grammarly that do a similar job, but unfortunately, they only support English,  
 and their AI capabilities can be a bit expensive and not as good as OpenAI or ChatGPT.  
-I would also like to perform the check with a simple key press and minimal UI interaction.
 
-3. Your OpenAI API key is used solely to connect with OpenAI for the purpose of GrammifyAI functionality and is not shared with anyone else.  
+2. Your OpenAI API key is used solely to connect with OpenAI for the purpose of GrammifyAI functionality and is not shared with anyone else.  
 Feel free to review the code and build the app on your machine if you have any concerns. ;)  
 It is stored locally on your device in an unencrypted manner, so use it at your own risk.  
