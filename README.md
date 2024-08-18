@@ -1,6 +1,6 @@
 # GrammifyAI
 
-Free AI grammar and spell checker for macOS that works everywhere and with any language.
+AI grammar checker for macOS that works everywhere and with any language.
 
 The usage of GrammifyAI is as simple as selecting the text and pressing a shortcut (⌘ + U or custom).  
 This will bring you the improvement suggestion popup and will copy the suggestion to the clipboard.
