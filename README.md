@@ -36,7 +36,10 @@ I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, an
   * As it uses OpenAI API, suggestion on sensitive topics can differ from original meaning
 
 ## Demo
-https://github.com/user-attachments/assets/6d13aa8b-1659-468a-aa44-d245dc65a4c1
+
+https://github.com/user-attachments/assets/0ce6d724-68ee-4fa7-a468-54584888e801
+
+
 
 ## Appendix
  1. **Motivation for implementing this applications**  
