@@ -26,7 +26,7 @@ final class AppState: ObservableObject {
     init() {
         checkPreconditions()
         KeyboardShortcuts.onKeyDown(for: .improveWriting) { [self] in
-            var selectionManager = SelectionManager()
+            let selectionManager = SelectionManager()
             let selectedTextResult = selectionManager.getSelectedText()
 
             if selectedTextResult.isSuccessful() {
@@ -41,8 +41,8 @@ final class AppState: ObservableObject {
     }
 
     public func checkPreconditions() {
-        let openAIToken = SettingsManager.getOpenAIToken()
-        openAIKeySetUp = openAIToken != nil && !openAIToken!.isEmpty
+        let openAIToken = SettingsManager.getAIApiToken()
+        openAIKeySetUp = !openAIToken.isEmpty
 
         accessibilityAPIPermissionSetUp = AXIsProcessTrusted()
     }

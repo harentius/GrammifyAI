@@ -13,7 +13,7 @@ struct SuggestionUI: View {
             } else if (appState.isOpenAIError) {
                 Text(appState.openAIError).foregroundStyle(.red)
             } else if (appState.isOpenAIRequestPending) {
-                Text("OpenAPI request...").foregroundStyle(.blue)
+                Text("API request...").foregroundStyle(.blue)
             } else {
                 Text(appState.originalText).foregroundStyle(.yellow)
                 Divider()
