@@ -24,7 +24,7 @@ struct SettingsManager {
     static public func getAIHost() -> String {
         let endpoint = UserDefaults.standard.string(forKey: SettingsManager.SETTING_AI_API_HOST)
 
-        if ((endpoint == nil) || ((endpoint?.isEmpty) != nil)) {
+        if ((endpoint == nil) || endpoint!.isEmpty) {
             return "api.openai.com"
         }
 
@@ -38,7 +38,7 @@ struct SettingsManager {
     static public func getAIScheme() -> String {
         let scheme = UserDefaults.standard.string(forKey: SettingsManager.SETTING_AI_API_SCHEME)
         
-        if ((scheme == nil) || ((scheme?.isEmpty) != nil)) {
+        if ((scheme == nil) || scheme!.isEmpty) {
             return "https"
         }
         
@@ -66,7 +66,7 @@ struct SettingsManager {
     static public func getAIModel() -> String {
         let model = UserDefaults.standard.string(forKey: SettingsManager.SETTING_AI_MODEL)
 
-        if ((model == nil) || ((model?.isEmpty) != nil)) {
+        if ((model == nil) || model!.isEmpty) {
             return  "gpt-4o-mini"
         }
 

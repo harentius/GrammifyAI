@@ -12,8 +12,10 @@ struct OpenAIHelper {
 
         let aiModel = SettingsManager.getAIModel()
         let aiHost = SettingsManager.getAIHost()
+        let aiScheme = SettingsManager.getAIScheme()
+        let aiPort = SettingsManager.getAIPort()
 
-        let configuration = OpenAI.Configuration(token: openAIToken, host: aiHost)
+        let configuration = OpenAI.Configuration(token: openAIToken, host: aiHost, port: aiPort, scheme: aiScheme)
         let openAI = OpenAI(configuration: configuration)
         let prompt = "Correct the writing of provided text. Response only with updated version, without any additional explanations. The text:"
         let query = ChatQuery(messages: [.init(role: .user, content: prompt + text)!], model: aiModel)

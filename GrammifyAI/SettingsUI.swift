@@ -59,7 +59,10 @@ struct SettingsUI: View {
                         SettingsManager.setAIPort(port: apiPort)
                         SettingsManager.setAIModel(model: model)
 
-
+                        //Task {
+                        //    let openAIHelper = OpenAIHelper()
+                        //    let result = await openAIHelper.correctWritting(text: "test")
+                        //}
                         appState.checkPreconditions()
                         appState.showSettingsUI = false
                     }
