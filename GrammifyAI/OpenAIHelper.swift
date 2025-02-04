@@ -10,12 +10,22 @@ struct OpenAIHelper {
             return Result.error(error: "API token is not set")
         }
 
+        let aiUrl = SettingsManager.getAIUrl()
         let aiModel = SettingsManager.getAIModel()
-        let aiHost = SettingsManager.getAIHost()
-        let aiScheme = SettingsManager.getAIScheme()
-        let aiPort = SettingsManager.getAIPort()
 
-        let configuration = OpenAI.Configuration(token: openAIToken, host: aiHost, port: aiPort, scheme: aiScheme)
+        let url = URL(string: aiUrl)
+        let aiHost = url?.host() ?? ""
+        let aiScheme = url?.scheme ?? "https"
+        let aiPort = url?.port ?? 443
+        let aiBasePath = url?.path() ?? "/"
+
+        let configuration = OpenAI.Configuration(
+            token: openAIToken,
+            host: aiHost,
+            port: aiPort,
+            scheme: aiScheme,
+            basePath: aiBasePath
+        )
         let openAI = OpenAI(configuration: configuration)
         let prompt = "Correct the writing of provided text. Response only with updated version, without any additional explanations. The text:"
         let query = ChatQuery(messages: [.init(role: .user, content: prompt + text)!], model: aiModel)

@@ -3,9 +3,7 @@ import KeyboardShortcuts
 
 struct SettingsUI: View {
     @StateObject var appState: AppState
-    @State private var apiEndpoint: String = SettingsManager.getAIHost()
-    @State private var apiScheme: String = SettingsManager.getAIScheme()
-    @State private var apiPort: Int = SettingsManager.getAIPort()
+    @State private var apiUrl: String = SettingsManager.getAIUrl()
     @State private var model: String = SettingsManager.getAIModel()
     @State private var openAIKey: String = SettingsManager.getAIApiToken()
 
@@ -20,22 +18,8 @@ struct SettingsUI: View {
                 }
 
                 HStack {
-                    Text("API endpoint")
-                    TextField("API endpoint", text: $apiEndpoint)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .disableAutocorrection(true)
-                }
-
-                HStack {
-                    Text("API scheme")
-                    TextField("API scheme", text: $apiScheme)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .disableAutocorrection(true)
-                }
-
-                HStack {
-                    Text("API port")
-                    TextField("API port", value: $apiPort, formatter: NumberFormatter())
+                    Text("API URL")
+                    TextField("API URL", text: $apiUrl)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .disableAutocorrection(true)
                 }
@@ -54,10 +38,7 @@ struct SettingsUI: View {
                 HStack {
                     Button("Close") {
                         SettingsManager.setAIApiToken(token: openAIKey)
-                        SettingsManager.setAIEndpoint(endpoint: apiEndpoint)
-                        SettingsManager.setAIScheme(scheme: apiScheme)
-                        SettingsManager.setAIPort(port: apiPort)
-                        SettingsManager.setAIModel(model: model)
+                        SettingsManager.setAIUrl(url: apiUrl)
 
                         //Task {
                         //    let openAIHelper = OpenAIHelper()
