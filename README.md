@@ -7,8 +7,9 @@ This will bring you the improvement suggestion popup and will copy the suggestio
 
 Thanks to the macOS accessibility API, GrammifyAI can work with text in any **web** or **native** application.
 Thanks to **LLM integration** (for example, OpenAI), GrammifyAI also improves your writting and language style.  
-<img width="500" alt="Screenshot 2024-08-14 at 20 20 12" src="https://github.com/user-attachments/assets/9155695c-49d6-44ad-ba07-71b2e4085982">
-<img width="295" alt="Screenshot 2025-01-02 at 16 08 48" src="https://github.com/user-attachments/assets/10ee74ab-1413-47cf-af5c-3baf39ec2fce" />
+<img width="500" alt="Screenshot 2024-08-14 at 20 20 12" src="https://github.com/user-attachments/assets/9155695c-49d6-44ad-ba07-71b2e4085982" />
+<img width="295" alt="Screenshot 2025-02-04 at 21 54 11" src="https://github.com/user-attachments/assets/c9c94f08-e5d9-44d3-b095-96b616f4b87c" />
+
 
 GrammifyAI utilizes your LLM API key, so there are no quotas or limits from the GrammifyAI side. Usage will be according to LLM API billing.
 
