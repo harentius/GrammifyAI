@@ -2,9 +2,6 @@ import Foundation
 
 struct SettingsManager {
     private static let SETTING_AI_API_TOKEN = "OPENAI_TOKEN"
-    private static let SETTING_AI_API_HOST = "API_HOST"
-    private static let SETTING_AI_API_SCHEME = "API_SCHEME"
-    private static let SETTING_AI_API_PORT = "API_PORT"
     private static let SETTING_AI_API_URL = "API_URL"
     private static let SETTING_AI_MODEL = "AI_MODEL"
 
