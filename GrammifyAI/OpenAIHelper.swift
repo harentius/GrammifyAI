@@ -24,16 +24,16 @@ struct OpenAIHelper {
             host: aiHost,
             port: aiPort,
             scheme: aiScheme,
-            basePath: aiBasePath
+            basePath: aiBasePath,
         )
+
         let openAI = OpenAI(configuration: configuration)
         let prompt = "Correct the writing of provided text. Response only with updated version, without any additional explanations. The text:"
         let query = ChatQuery(messages: [.init(role: .user, content: prompt + text)!], model: aiModel)
 
         do {
             let result = try await openAI.chats(query: query)
-            let msg = result.choices[0].message.content?.string
-
+            let msg = result.choices[0].message.content
             if (msg == nil) {
                 return Result.error(error: "Can't process API response")
             }

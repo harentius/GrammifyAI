@@ -39,6 +39,7 @@ struct SettingsUI: View {
                     Button("Close") {
                         SettingsManager.setAIApiToken(token: openAIKey)
                         SettingsManager.setAIUrl(url: apiUrl)
+                        SettingsManager.setAIModel(model: model)
 
                         //Task {
                         //    let openAIHelper = OpenAIHelper()
