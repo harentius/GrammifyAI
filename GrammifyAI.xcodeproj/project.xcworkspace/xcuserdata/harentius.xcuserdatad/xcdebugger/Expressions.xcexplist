@@ -10,5 +10,13 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "closure #1 in SuggestionUI.body.getter:SuggestionUI.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "appState.openAIError">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

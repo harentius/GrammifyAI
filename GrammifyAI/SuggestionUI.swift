@@ -11,7 +11,24 @@ struct SuggestionUI: View {
                 Text(appState.accessibilityAPIError)
                     .foregroundStyle(.red)
             } else if (appState.isOpenAIError) {
-                Text(appState.openAIError).foregroundStyle(.red)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(appState.openAIError)
+                        .foregroundColor(.red)
+                        .font(.headline)
+                    if !appState.errorDetails.isEmpty {
+                        Text("Server Response:")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        ScrollView {
+                            Text(appState.errorDetails)
+                                .foregroundColor(.gray)
+                                .font(.footnote)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .textSelection(.enabled)
+                        }
+                        .frame(maxHeight: 200)
+                    }
+                }
             } else if (appState.isOpenAIRequestPending) {
                 Text("API request...").foregroundStyle(.blue)
             } else {
@@ -50,6 +67,7 @@ struct SuggestionUI: View {
                 } else {
                     appState.isOpenAIError = true
                     appState.openAIError = result.error
+                    appState.errorDetails = result.errorDetails
                 }
             }
         }
@@ -66,3 +84,4 @@ struct SuggestionUI: View {
     return SuggestionUI(appState: appState)
         .frame(width: 600, height: 300)
 }
+
