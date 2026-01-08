@@ -15,10 +15,15 @@ GrammifyAI utilizes your LLM API key, so there are no quotas or limits from the 
 
 ## Installation
   1. Download the latest [release](https://github.com/harentius/GrammifyAI/releases) and move it to the Applications folder on your Mac.
-  2. To run the application, right-click on the GrammifyAI app name and select "Open," then grant permission to open it.
-  3. To add accessibility permissions for the application, open "System Settings," navigate to "Privacy & Security," select "Accessibility," and add GrammifyAI to the list.
-  4. Add your API key in the GrammifyAI settings (and change other settings if needed).
-  5. Select the text in any application and press ⌘ + U or your custom shortcut.
+  2. To run the application, right-click on the GrammifyAI app name and select "Open," then grant permission to open it.  
+  If the application is still blocked, you may need to go to "System Settings", navigate to "Privacy & Security", and allow the app to open.  
+  <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/a379066d-c35e-4e4b-a55d-847f5833c396" />
+  
+  4. To add accessibility permissions for the application, open "System Settings" navigate to "Privacy & Security", select "Accessibility" and add GrammifyAI to the list.
+  <img width="500" alt="accessibility" src="https://github.com/user-attachments/assets/8d804d99-a8c5-4835-b9f9-4a2ed7a52902" />
+  
+  5. Add your API key in the GrammifyAI settings (and change other settings if needed).
+  You can use any LLM with an OpenAI-compatible API.
 
 ## Update
   1. After installing a new version, you must remove GrammifyAI from Accessibility permissions and grant them again.
@@ -26,9 +31,10 @@ GrammifyAI utilizes your LLM API key, so there are no quotas or limits from the 
 
 ## Usage
   1. Select the text you want to enhance.
-  2. Press ⌘ + U or your custom combination if you have changed it.
-  3. You may close the window if you want by pressing the cross symbol or ⌘ + W.
-  4. You can insert the corrected text using ⌘ + V.
+  2. Press `⌘ + U` or your custom combination if you have changed it.
+  3. You'll see the suggested correction in diff format.
+  You may just click in input field to obtain back the focus.
+  4. You can insert the corrected text using `⌘ + V`.
 
 ## Known successful use cases
 I use the GrammifyAI application in *Slack*, *Chrome*, *Notion*, *Messenger*, and any standard web form.
