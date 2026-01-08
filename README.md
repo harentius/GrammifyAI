@@ -18,8 +18,8 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 1.  Download the latest [release](https://github.com/harentius/GrammifyAI/releases) and move it to your **Applications** folder.
 2.  Right-click the GrammifyAI app and select "Open" to bypass the initial security check. Grant permission to open it if prompted.
     * *Note:* If the app is blocked, go to **System Settings > Privacy & Security** and allow the app to open.
-    <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/2d495b93-0f91-4e36-8163-5bf2b295d43e" />
-3.  Grant Accessibility permissions: Open **System Settings > Privacy & Security > Accessibility** and add GrammifyAI to the list.
+    <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/2d495b93-0f91-4e36-8163-5bf2b295d43e" />  
+3.  Grant Accessibility permissions: Open **System Settings > Privacy & Security > Accessibility** and add GrammifyAI to the list.  
     <img width="500" alt="accessibility" src="https://github.com/user-attachments/assets/ca8d366c-7685-4da6-a108-4b805bc66e77" />
 4.  Add your API key in the GrammifyAI settings. You can use any LLM with an OpenAI-compatible API.
 
