@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct OpenAIHelper {
+struct LlmClient {
     private struct ChatMessage: Decodable {
         let role: String?
         let content: String?
@@ -91,3 +91,4 @@ struct OpenAIHelper {
         }
     }
 }
+

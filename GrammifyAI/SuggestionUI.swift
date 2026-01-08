@@ -3,7 +3,7 @@ import SwiftUI
 struct SuggestionUI: View {
     @StateObject var appState: AppState
     @Environment(\.controlActiveState) var controlActiveState
-    var openAIHelper = OpenAIHelper()
+    var llmClient = LlmClient()
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -57,7 +57,7 @@ struct SuggestionUI: View {
 
             Task {
                 appState.isOpenAIRequestPending = true
-                let result = await openAIHelper.correctWritting(text: newState)
+                let result = await llmClient.correctWritting(text: newState)
                 appState.isOpenAIRequestPending = false
 
                 if result.isSuccessful() {

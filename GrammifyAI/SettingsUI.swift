@@ -36,15 +36,11 @@ struct SettingsUI: View {
                 }
 
                 HStack {
-                    Button("Close") {
+                    Button("Save") {
                         SettingsManager.setAIApiToken(token: openAIKey)
                         SettingsManager.setAIUrl(url: apiUrl)
                         SettingsManager.setAIModel(model: model)
 
-                        //Task {
-                        //    let openAIHelper = OpenAIHelper()
-                        //    let result = await openAIHelper.correctWritting(text: "test")
-                        //}
                         appState.checkPreconditions()
                         appState.showSettingsUI = false
                     }
