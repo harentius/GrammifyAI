@@ -18,7 +18,6 @@
 		07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA02C5F7B6D00AE2FEE /* AppState.swift */; };
 		07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */; };
 		07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07946AA22C5F7B6D00AE2FEE /* Constants.swift */; };
-		07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 07B5B7E62C654EBA0051753F /* OpenAI */; };
 		07C6E61E2C6BD05900ACC7F0 /* DiffChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C6E61D2C6BD05900ACC7F0 /* DiffChecker.swift */; };
 		07C6E6292C6C013B00ACC7F0 /* SwiftDiff in Frameworks */ = {isa = PBXBuildFile; productRef = 07C6E6282C6C013B00ACC7F0 /* SwiftDiff */; };
 		07DC23CD2C67BFFC00DC5E7E /* OpenAIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23CC2C67BFFC00DC5E7E /* OpenAIHelper.swift */; };
@@ -53,7 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07B5B7E72C654EBA0051753F /* OpenAI in Frameworks */,
 				07946A9C2C5F777600AE2FEE /* KeyboardShortcuts in Frameworks */,
 				07C6E6292C6C013B00ACC7F0 /* SwiftDiff in Frameworks */,
 			);
@@ -128,7 +126,6 @@
 			name = GrammifyAI;
 			packageProductDependencies = (
 				07946A9B2C5F777600AE2FEE /* KeyboardShortcuts */,
-				07B5B7E62C654EBA0051753F /* OpenAI */,
 				07C6E6282C6C013B00ACC7F0 /* SwiftDiff */,
 			);
 			productName = GrammifyAI;
@@ -162,7 +159,6 @@
 			mainGroup = 07946A732C5F763600AE2FEE;
 			packageReferences = (
 				07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
-				07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */,
 				07C6E6272C6C013B00ACC7F0 /* XCRemoteSwiftPackageReference "SwiftDiff5" */,
 			);
 			productRefGroup = 07946A7D2C5F763700AE2FEE /* Products */;
@@ -420,14 +416,6 @@
 				minimumVersion = 2.0.1;
 			};
 		};
-		07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MacPaw/OpenAI.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.0;
-			};
-		};
 		07C6E6272C6C013B00ACC7F0 /* XCRemoteSwiftPackageReference "SwiftDiff5" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kvasnikoff/SwiftDiff5";
@@ -443,11 +431,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07946A9A2C5F777600AE2FEE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
-		};
-		07B5B7E62C654EBA0051753F /* OpenAI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 07B5B7E52C654EBA0051753F /* XCRemoteSwiftPackageReference "OpenAI" */;
-			productName = OpenAI;
 		};
 		07C6E6282C6C013B00ACC7F0 /* SwiftDiff */ = {
 			isa = XCSwiftPackageProductDependency;
