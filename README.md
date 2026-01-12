@@ -8,8 +8,8 @@ This triggers a popup with improvement suggestions and automatically copies the 
 Thanks to the macOS Accessibility API, GrammifyAI works with text in any **web** or **native** application.
 By leveraging **LLM integration** (e.g., OpenAI), it not only fixes grammar but also improves your writing style and tone.
 
-<img width="500" alt="App Screenshot" src="https://github.com/user-attachments/assets/9155695c-49d6-44ad-ba07-71b2e4085982" />
-<img width="295" alt="Diff View" src="https://github.com/user-attachments/assets/c9c94f08-e5d9-44d3-b095-96b616f4b87c" />
+<img width="500" alt="App Screenshot" src="https://github.com/user-attachments/assets/ab561557-0f9c-4b6d-b148-67b4e1eaf5d3" />
+<img width="295" alt="Diff View" src="https://github.com/user-attachments/assets/2de9b281-70bc-46dd-8842-15307108c544" />
 
 GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the GrammifyAI side; usage depends entirely on your LLM API billing.
 
@@ -18,9 +18,9 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 1.  Download the latest [release](https://github.com/harentius/GrammifyAI/releases) and move it to your **Applications** folder.
 2.  Right-click the GrammifyAI app and select "Open" to bypass the initial security check. Grant permission to open it if prompted.
     * *Note:* If the app is blocked, go to **System Settings > Privacy & Security** and allow the app to open.
-    <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/a379066d-c35e-4e4b-a55d-847f5833c396" />
-3.  Grant Accessibility permissions: Open **System Settings > Privacy & Security > Accessibility** and add GrammifyAI to the list.
-    <img width="500" alt="accessibility" src="https://github.com/user-attachments/assets/8d804d99-a8c5-4835-b9f9-4a2ed7a52902" />
+    <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/2d495b93-0f91-4e36-8163-5bf2b295d43e" />  
+3.  Grant Accessibility permissions: Open **System Settings > Privacy & Security > Accessibility** and add GrammifyAI to the list.  
+    <img width="500" alt="accessibility" src="https://github.com/user-attachments/assets/ca8d366c-7685-4da6-a108-4b805bc66e77" />
 4.  Add your API key in the GrammifyAI settings. You can use any LLM with an OpenAI-compatible API.
 
 ## Updating the App
