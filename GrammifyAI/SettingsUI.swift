@@ -6,6 +6,7 @@ struct SettingsUI: View {
     @State private var apiUrl: String = SettingsManager.getAIUrl()
     @State private var model: String = SettingsManager.getAIModel()
     @State private var openAIKey: String = SettingsManager.getAIApiToken()
+    @State private var launchAtLogin: Bool = SettingsManager.getLaunchAtLogin()
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,10 +37,15 @@ struct SettingsUI: View {
                 }
 
                 HStack {
+                    Toggle("Launch at Login", isOn: $launchAtLogin)
+                }
+
+                HStack {
                     Button("Save") {
                         SettingsManager.setAIApiToken(token: openAIKey)
                         SettingsManager.setAIUrl(url: apiUrl)
                         SettingsManager.setAIModel(model: model)
+                        SettingsManager.setLaunchAtLogin(enabled: launchAtLogin)
 
                         appState.checkPreconditions()
                         appState.showSettingsUI = false

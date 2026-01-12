@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+* GrammifyAI can now be set to launch automatically on startup
+
 ## 0.6.0
 
 * Replaced 3rd Party OpenAI client with own LLM Client implementation
