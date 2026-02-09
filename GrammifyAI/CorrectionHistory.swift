@@ -196,4 +196,34 @@ class HistoryStore: ObservableObject {
             NSLog("Failed to clear history: \(error.localizedDescription)")
         }
     }
+
+    // Get all unique languages in the database
+    func getUniqueLanguages() -> [String] {
+        let descriptor = FetchDescriptor<CorrectionRecord>(
+            sortBy: [SortDescriptor(\.language)]
+        )
+
+        do {
+            let records = try modelContext.fetch(descriptor)
+            let languages = Set(records.map { $0.language })
+            return Array(languages).sorted()
+        } catch {
+            NSLog("Failed to fetch unique languages: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // Get date range of all records (for determining available years)
+    func getDateRange() -> (oldest: Date?, newest: Date?) {
+        let descriptor = FetchDescriptor<CorrectionRecord>(
+            sortBy: [SortDescriptor(\.timestamp, order: .forward)]
+        )
+
+        do {
+            let records = try modelContext.fetch(descriptor)
+            return (records.first?.timestamp, records.last?.timestamp)
+        } catch {
+            return (nil, nil)
+        }
+    }
 }

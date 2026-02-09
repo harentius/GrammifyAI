@@ -10,6 +10,7 @@ final class AppState: ObservableObject {
     // UI state
     @Published var showSettingsUI = false
     @Published var showSuggestionUI = false
+    @Published var showStatisticsUI = false
 
     @Published var originalText = ""
     @Published var suggestion = ""

@@ -45,10 +45,22 @@ struct GrammifyAIApp: App {
                 .modelContainer(modelContainer)
         }
 
+        Window("Statistics", id: "statistics") {
+            StatisticsUI(appState: appState)
+                .modelContainer(modelContainer)
+        }
+
         .onChange(of: appState.showSuggestionUI, initial: true) { oldState, newState in
             if (newState) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
                 openWindow(id: "suggestion")
+            }
+        }
+
+        .onChange(of: appState.showStatisticsUI, initial: true) { oldState, newState in
+            if (newState) {
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                openWindow(id: "statistics")
             }
         }
     }
