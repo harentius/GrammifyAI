@@ -16,6 +16,10 @@ struct MenuBarContentUI: View {
 
             SettingsUI(appState: appState)
 
+            Button("Statistics") {
+                appState.showStatisticsUI = true
+            }
+
             Divider()
 
             Button("Quit") {

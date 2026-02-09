@@ -2,6 +2,19 @@ import Foundation
 import SwiftUI
 
 struct LlmClient {
+    // Response structure expected from LLM
+    struct CorrectionResponse: Codable {
+        let detectedLanguage: String
+        let correctedText: String
+        let errors: [ErrorInfo]
+
+        struct ErrorInfo: Codable {
+            let category: String
+            let originalFragment: String?
+            let correctedFragment: String?
+        }
+    }
+
     private struct ChatMessage: Decodable {
         let role: String?
         let content: String?
@@ -14,6 +27,34 @@ struct LlmClient {
 
     private struct ChatResponse: Decodable {
         let choices: [ChatChoice]
+    }
+
+    // Helper method to parse LLM response as JSON
+    private func parseCorrectionResponse(_ content: String) -> CorrectionResponse? {
+        // Try to extract JSON from markdown code blocks if present
+        var jsonString = content
+        if let range = content.range(of: "```json\\s*([\\s\\S]*?)```", options: .regularExpression) {
+            let match = content[range]
+            jsonString = String(match).replacingOccurrences(of: "```json", with: "")
+                                      .replacingOccurrences(of: "```", with: "")
+                                      .trimmingCharacters(in: .whitespacesAndNewlines)
+        } else if let range = content.range(of: "```\\s*([\\s\\S]*?)```", options: .regularExpression) {
+            let match = content[range]
+            jsonString = String(match).replacingOccurrences(of: "```", with: "")
+                                      .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        guard let data = jsonString.data(using: .utf8) else {
+            return nil
+        }
+
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode(CorrectionResponse.self, from: data)
+        } catch {
+            NSLog("Failed to parse correction response: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     public func correctWritting(text: String) async -> Result {
@@ -32,8 +73,47 @@ struct LlmClient {
         let aiPort = url?.port ?? 443
         let aiBasePath = url?.path ?? "/"
 
-        let prompt = "Correct the writing of provided text. Response only with updated version, without any additional explanations. The text:"
-        let userMessage = prompt + text
+        // Get error categories for all supported languages
+        let englishCategories = ErrorCategory.categoriesForLanguage("English")
+        let germanCategories = ErrorCategory.categoriesForLanguage("German")
+
+        let englishList = englishCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
+        let germanList = germanCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
+
+        let prompt = """
+        Detect the language of the provided text, correct its writing, and classify all detected errors.
+
+        Return your response as a JSON object with this exact structure:
+        {
+          "detectedLanguage": "English" or "German",
+          "correctedText": "the corrected version of the text",
+          "errors": [
+            {
+              "category": "ERROR_CODE",
+              "originalFragment": "the incorrect fragment (optional)",
+              "correctedFragment": "the corrected fragment (optional)"
+            }
+          ]
+        }
+
+        Available error categories by language:
+
+        Universal (all languages): SYN (Syntax), VOC (Vocabulary), PREP (Prepositions), IDM (Idiomatics), REG (Register), ORT (Orthography)
+
+        English-specific: \(englishList)
+
+        German-specific: \(germanList)
+
+        Instructions:
+        1. Detect the language of the text automatically
+        2. Correct the text according to that language's grammar rules
+        3. Classify errors using appropriate categories for that language
+        4. Use only the category codes (e.g., "SYN", "VOC", "PREP")
+        5. If there are no errors, return an empty array for errors
+
+        Text to analyze:
+        """
+        let userMessage = prompt + "\n" + text
 
         // Build URL
         var components = URLComponents()
@@ -79,7 +159,27 @@ struct LlmClient {
             do {
                 let decoded = try JSONDecoder().decode(ChatResponse.self, from: data)
                 if let msg = decoded.choices.first?.message?.content, !msg.isEmpty {
-                    return Result.success(output: msg)
+                    // Try to parse the LLM response as JSON with error classification
+                    if let correctionResponse = parseCorrectionResponse(msg) {
+                        let errors = correctionResponse.errors.compactMap { errorInfo -> CorrectionError? in
+                            guard let category = ErrorCategory(rawValue: errorInfo.category) else {
+                                return nil
+                            }
+                            return CorrectionError(
+                                category: category,
+                                originalFragment: errorInfo.originalFragment,
+                                correctedFragment: errorInfo.correctedFragment
+                            )
+                        }
+                        return Result.success(
+                            output: correctionResponse.correctedText,
+                            errors: errors,
+                            detectedLanguage: correctionResponse.detectedLanguage
+                        )
+                    } else {
+                        // Fallback: if LLM didn't return JSON, treat entire response as corrected text
+                        return Result.success(output: msg, errors: [], detectedLanguage: "Unknown")
+                    }
                 } else {
                     return Result.error(error: "Can't process API response", errorDetails: "Missing message content")
                 }

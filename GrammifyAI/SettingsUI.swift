@@ -1,12 +1,17 @@
 import SwiftUI
 import KeyboardShortcuts
+import SwiftData
 
 struct SettingsUI: View {
     @StateObject var appState: AppState
+    @Environment(\.modelContext) private var modelContext
+    @State private var historyStore: HistoryStore?
     @State private var apiUrl: String = SettingsManager.getAIUrl()
     @State private var model: String = SettingsManager.getAIModel()
     @State private var openAIKey: String = SettingsManager.getAIApiToken()
     @State private var launchAtLogin: Bool = SettingsManager.getLaunchAtLogin()
+    @State private var historyCount: Int = 0
+    @State private var showingClearConfirmation: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -40,6 +45,36 @@ struct SettingsUI: View {
                     Toggle("Launch at Login", isOn: $launchAtLogin)
                 }
 
+                Divider()
+
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Correction History")
+                            .font(.headline)
+                        Text("\(historyCount) items in history")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Button("Clear History") {
+                        showingClearConfirmation = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red)
+                    .alert("Clear History", isPresented: $showingClearConfirmation) {
+                        Button("Cancel", role: .cancel) { }
+                        Button("Clear", role: .destructive) {
+                            Task { @MainActor in
+                                historyStore?.clearHistory()
+                                refreshHistoryCount()
+                            }
+                        }
+                    } message: {
+                        Text("Are you sure you want to clear all \(historyCount) correction records? This action cannot be undone.")
+                    }
+                }
+                .padding(.vertical, 4)
+
                 HStack {
                     Button("Save") {
                         SettingsManager.setAIApiToken(token: openAIKey)
@@ -56,6 +91,31 @@ struct SettingsUI: View {
                     appState.showSettingsUI = true
                 }
             }
+        }
+        .onChange(of: appState.showSettingsUI) { _, newValue in
+            if newValue {
+                initializeStoreAndRefresh()
+            }
+        }
+        .onAppear {
+            initializeStoreAndRefresh()
+        }
+    }
+
+    @MainActor
+    private func initializeStoreAndRefresh() {
+        // Initialize store if needed
+        if historyStore == nil,
+           let container = try? modelContext.container {
+            historyStore = HistoryStore(modelContainer: container)
+        }
+        refreshHistoryCount()
+    }
+
+    @MainActor
+    private func refreshHistoryCount() {
+        if let store = historyStore {
+            historyCount = store.getRecordCount(language: nil)
         }
     }
 }

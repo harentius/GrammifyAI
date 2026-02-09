@@ -8,13 +8,15 @@ struct Result {
     var error: String
     var errorDetails: String
     var output: String
+    var errors: [CorrectionError]
+    var detectedLanguage: String
 
-    public static func success(output: String) -> Self {
-        return Result(status: STATUS_SUCCESS, error: "", errorDetails: "", output: output)
+    public static func success(output: String, errors: [CorrectionError] = [], detectedLanguage: String = "") -> Self {
+        return Result(status: STATUS_SUCCESS, error: "", errorDetails: "", output: output, errors: errors, detectedLanguage: detectedLanguage)
     }
 
     public static func error(error: String, errorDetails: String = "") -> Self {
-        return Result(status: STATUS_ERROR, error: error, errorDetails: errorDetails, output: "")
+        return Result(status: STATUS_ERROR, error: error, errorDetails: errorDetails, output: "", errors: [], detectedLanguage: "")
     }
 
     public func isSuccessful () -> Bool {

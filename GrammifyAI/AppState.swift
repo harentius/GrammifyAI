@@ -1,7 +1,6 @@
 import Foundation
 import KeyboardShortcuts
 import AppKit
-import OpenAI
 
 final class AppState: ObservableObject {
     // preconditions
@@ -11,9 +10,12 @@ final class AppState: ObservableObject {
     // UI state
     @Published var showSettingsUI = false
     @Published var showSuggestionUI = false
+    @Published var showStatisticsUI = false
 
     @Published var originalText = ""
     @Published var suggestion = ""
+    @Published var detectedErrors: [CorrectionError] = []
+    @Published var detectedLanguage: String = ""
 
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
@@ -53,5 +55,7 @@ final class AppState: ObservableObject {
         isOpenAIError = false
         openAIError = ""
         errorDetails = ""
+        detectedErrors = []
+        detectedLanguage = ""
     }
 }
