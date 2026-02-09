@@ -1,6 +1,7 @@
 import SwiftUI
 import ApplicationServices
 import Cocoa
+import SwiftData
 
 @main
 struct GrammifyAIApp: App {
@@ -8,6 +9,21 @@ struct GrammifyAIApp: App {
     @StateObject private var appState = AppState()
     @Environment(\.openWindow) private var openWindow
     @State var observer: NSKeyValueObservation?
+
+    // SwiftData model container for correction history
+    let modelContainer: ModelContainer = {
+        let schema = Schema([
+            CorrectionRecord.self,
+            CorrectionError.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
 
     var body: some Scene {
         MenuBarExtra {
@@ -19,12 +35,14 @@ struct GrammifyAIApp: App {
                         }
                     }
                 }
+                .modelContainer(modelContainer)
         } label: {
             Image(systemName: "wand.and.stars")
         }.menuBarExtraStyle(.window)
 
         Window("Suggestion", id: "suggestion") {
             SuggestionUI(appState: appState)
+                .modelContainer(modelContainer)
         }
 
         .onChange(of: appState.showSuggestionUI, initial: true) { oldState, newState in

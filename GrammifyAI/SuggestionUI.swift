@@ -1,8 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct SuggestionUI: View {
     @StateObject var appState: AppState
     @Environment(\.controlActiveState) var controlActiveState
+    @Environment(\.modelContext) private var modelContext
+    @State private var historyStore: HistoryStore?
     var llmClient = LlmClient()
 
     var body: some View {
@@ -37,6 +40,7 @@ struct SuggestionUI: View {
 
                 Text(DiffChecker.diffCheck(incorrectString: appState.originalText, correctString: appState.suggestion))
                 Divider()
+
                 Text("Suggestion is copied to the clipboard")
                     .italic()
                     .foregroundColor(.gray)
@@ -62,8 +66,18 @@ struct SuggestionUI: View {
 
                 if result.isSuccessful() {
                     appState.suggestion = result.output
+                    appState.detectedErrors = result.errors
+                    appState.detectedLanguage = result.detectedLanguage
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(appState.suggestion, forType: .string)
+
+                    // Save to history with detected language
+                    await saveToHistory(
+                        originalText: newState,
+                        correctedText: result.output,
+                        errors: result.errors,
+                        language: result.detectedLanguage.isEmpty ? "Unknown" : result.detectedLanguage
+                    )
                 } else {
                     appState.isOpenAIError = true
                     appState.openAIError = result.error
@@ -71,6 +85,28 @@ struct SuggestionUI: View {
                 }
             }
         }
+    }
+
+    @MainActor
+    private func saveToHistory(
+        originalText: String,
+        correctedText: String,
+        errors: [CorrectionError],
+        language: String
+    ) {
+        // Initialize store if needed
+        if historyStore == nil,
+           let container = try? modelContext.container {
+            historyStore = HistoryStore(modelContainer: container)
+        }
+
+        // Save the record
+        historyStore?.createRecord(
+            originalText: originalText,
+            correctedText: correctedText,
+            errors: errors,
+            language: language
+        )
     }
 }
 

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		075C39CC2C68F13F00C8E193 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075C39CB2C68F13F00C8E193 /* Result.swift */; };
+		1B7E02BA5D6D45A7AA69A990F061C46E2C68F13F00C8E193 /* ErrorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */; };
+		90CBA398343F418E8E28C2EB3537628D2C68F13F00C8E193 /* CorrectionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */; };
 		075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075C39CD2C68F2CA00C8E193 /* AXError.swift */; };
 		07946A842C5F763700AE2FEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A832C5F763700AE2FEE /* Assets.xcassets */; };
 		07946A872C5F763700AE2FEE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07946A862C5F763700AE2FEE /* Preview Assets.xcassets */; };
@@ -26,6 +28,8 @@
 		07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */; };
 /* End PBXBuildFile section */
 
+		15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCategory.swift; sourceTree = "<group>"; };
+		ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionHistory.swift; sourceTree = "<group>"; };
 /* Begin PBXFileReference section */
 		075C39CB2C68F13F00C8E193 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		075C39CD2C68F2CA00C8E193 /* AXError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXError.swift; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 				07946A9F2C5F7B6D00AE2FEE /* SelectionManager.swift */,
 				07DC23CE2C67C04500DC5E7E /* SettingsManager.swift */,
 				07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */,
+				15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */,
+				ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */,
 				07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */,
 				075C39CB2C68F13F00C8E193 /* Result.swift */,
 				075C39CD2C68F2CA00C8E193 /* AXError.swift */,
@@ -194,6 +200,8 @@
 				07946AA42C5F7B6D00AE2FEE /* GrammifyAIApp.swift in Sources */,
 				07DC23CF2C67C04500DC5E7E /* SettingsManager.swift in Sources */,
 				07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */,
+				1B7E02BA5D6D45A7AA69A990F061C46E2C68F13F00C8E193 /* ErrorCategory.swift in Sources */,
+				90CBA398343F418E8E28C2EB3537628D2C68F13F00C8E193 /* CorrectionHistory.swift in Sources */,
 				075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */,
 				07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */,
 				07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */,
