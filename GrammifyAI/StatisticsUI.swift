@@ -4,7 +4,6 @@ import Charts
 
 struct StatisticsUI: View {
     @ObservedObject var appState: AppState
-    @Environment(\.controlActiveState) var controlActiveState
     @Environment(\.modelContext) private var modelContext
     @State private var historyStore: HistoryStore?
 
@@ -176,15 +175,14 @@ struct StatisticsUI: View {
         }
         .padding()
         .frame(minWidth: 800, minHeight: 700)
-        .onChange(of: controlActiveState) { _, newState in
-            if newState == .inactive {
-                appState.showStatisticsUI = false
-            }
-        }
         .onAppear {
+            appState.showStatisticsUI = true
             initializeStore()
             loadAvailableLanguages()
             refreshData()
+        }
+        .onDisappear {
+            appState.showStatisticsUI = false
         }
     }
 

@@ -40,15 +40,18 @@ struct GrammifyAIApp: App {
             Image(systemName: "wand.and.stars")
         }.menuBarExtraStyle(.window)
 
-        Window("Suggestion", id: "suggestion") {
+        WindowGroup("Suggestion", id: "suggestion") {
             SuggestionUI(appState: appState)
                 .modelContainer(modelContainer)
         }
+        .windowResizability(.contentSize)
+        .commandsRemoved()
 
-        Window("Statistics", id: "statistics") {
+        WindowGroup("Statistics", id: "statistics") {
             StatisticsUI(appState: appState)
                 .modelContainer(modelContainer)
         }
+        .commandsRemoved()
 
         .onChange(of: appState.showSuggestionUI, initial: true) { oldState, newState in
             if (newState) {

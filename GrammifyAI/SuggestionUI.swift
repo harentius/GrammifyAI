@@ -4,6 +4,7 @@ import SwiftData
 struct SuggestionUI: View {
     @StateObject var appState: AppState
     @Environment(\.controlActiveState) var controlActiveState
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @State private var historyStore: HistoryStore?
     var llmClient = LlmClient()
@@ -49,6 +50,7 @@ struct SuggestionUI: View {
         .onChange(of: controlActiveState, initial: true) { oldState, newState in
             if newState == .inactive {
                 appState.showSuggestionUI = false
+                dismiss()
             }
         }
         .onChange(of: appState.originalText, initial: true) { oldState, newState in
