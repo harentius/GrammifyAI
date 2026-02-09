@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+* Add statistics
+* Improved build system
+* Experiment with agentic workflows
+
 ## 0.6.1
 
 * GrammifyAI can now be set to launch automatically on startup
