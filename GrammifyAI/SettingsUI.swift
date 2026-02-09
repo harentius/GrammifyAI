@@ -56,24 +56,36 @@ struct SettingsUI: View {
                             .foregroundColor(.secondary)
                     }
                     Spacer()
-                    Button("Clear History") {
-                        showingClearConfirmation = true
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
-                    .alert("Clear History", isPresented: $showingClearConfirmation) {
-                        Button("Cancel", role: .cancel) { }
-                        Button("Clear", role: .destructive) {
-                            Task { @MainActor in
-                                historyStore?.clearHistory()
-                                refreshHistoryCount()
-                            }
+                    if !showingClearConfirmation {
+                        Button("Clear History") {
+                            showingClearConfirmation = true
                         }
-                    } message: {
-                        Text("Are you sure you want to clear all \(historyCount) correction records? This action cannot be undone.")
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red)
                     }
                 }
                 .padding(.vertical, 4)
+
+                if showingClearConfirmation {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Are you sure you want to clear all \(historyCount) correction records? This action cannot be undone.")
+                            .font(.caption)
+                        HStack {
+                            Button("Cancel") {
+                                showingClearConfirmation = false
+                            }
+                            Button("Clear") {
+                                historyStore?.clearHistory()
+                                refreshHistoryCount()
+                                showingClearConfirmation = false
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.red)
+                        }
+                    }
+                    .padding(8)
+                    .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
+                }
 
                 HStack {
                     Button("Save") {

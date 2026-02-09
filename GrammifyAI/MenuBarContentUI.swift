@@ -16,8 +16,10 @@ struct MenuBarContentUI: View {
 
             SettingsUI(appState: appState)
 
-            Button("Statistics") {
-                appState.showStatisticsUI = true
+            if !appState.showSettingsUI {
+                Button("Statistics") {
+                    appState.showStatisticsUI = true
+                }
             }
 
             Divider()

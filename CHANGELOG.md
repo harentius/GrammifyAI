@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+* Fix a bug with history cleaning
+
 ## 0.7.1
 
 * Fix autorelease
