@@ -46,13 +46,6 @@ struct GrammifyAIApp: App {
         }
         .windowResizability(.contentSize)
         .commandsRemoved()
-
-        WindowGroup("Statistics", id: "statistics") {
-            StatisticsUI(appState: appState)
-                .modelContainer(modelContainer)
-        }
-        .commandsRemoved()
-
         .onChange(of: appState.showSuggestionUI, initial: true) { oldState, newState in
             if (newState) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
@@ -60,6 +53,11 @@ struct GrammifyAIApp: App {
             }
         }
 
+        WindowGroup("Statistics", id: "statistics") {
+            StatisticsUI(appState: appState)
+                .modelContainer(modelContainer)
+        }
+        .commandsRemoved()
         .onChange(of: appState.showStatisticsUI, initial: true) { oldState, newState in
             if (newState) {
                 NSApplication.shared.activate(ignoringOtherApps: true)
