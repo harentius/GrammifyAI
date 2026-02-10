@@ -59,9 +59,15 @@ jobs:
 
       - name: Extract release notes
         id: extract_notes
-        uses: ffurrer2/extract-release-notes@v2
-        with:
-          changelog_file: CHANGELOG.md
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          NOTES=$(awk "/^## ${VERSION}$/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md)
+          echo "Release notes:"
+          echo "$NOTES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "RELEASE_NOTES<<$EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         env:
@@ -70,5 +76,5 @@ jobs:
           gh release create "${{ steps.version.outputs.VERSION }}" \
             "GrammifyAI-${{ steps.version.outputs.VERSION }}.zip" \
             --title "GrammifyAI ${{ steps.version.outputs.VERSION }}" \
-            --notes "${{ steps.extract_notes.outputs.release_notes }}" \
+            --notes "${{ steps.extract_notes.outputs.RELEASE_NOTES }}" \
             --prerelease
