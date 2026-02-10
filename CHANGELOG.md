@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1
+
+* Fix a bug with displaying a window
+* CI release is marked as "Pre-release" by default
+
 ## 0.7.2
 
 * Fix a bug with history cleaning
