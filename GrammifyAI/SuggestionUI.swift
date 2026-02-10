@@ -47,7 +47,8 @@ struct SuggestionUI: View {
                     .foregroundColor(.gray)
             }
         }.padding()
-        .onChange(of: controlActiveState, initial: true) { oldState, newState in
+        .frame(minWidth: 600, minHeight: 300)
+        .onChange(of: controlActiveState) { oldState, newState in
             if newState == .inactive {
                 appState.showSuggestionUI = false
                 dismiss()
