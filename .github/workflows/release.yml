@@ -70,4 +70,5 @@ jobs:
           gh release create "${{ steps.version.outputs.VERSION }}" \
             "GrammifyAI-${{ steps.version.outputs.VERSION }}.zip" \
             --title "GrammifyAI ${{ steps.version.outputs.VERSION }}" \
-            --notes "${{ steps.extract_notes.outputs.release_notes }}"
+            --notes "${{ steps.extract_notes.outputs.release_notes }}" \
+            --prerelease
