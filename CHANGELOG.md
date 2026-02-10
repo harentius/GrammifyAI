@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2
+
+* Improve reading of release notes
+
 ## 0.8.1
 
 * Fix a bug with displaying a window
