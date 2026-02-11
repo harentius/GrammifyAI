@@ -29,11 +29,11 @@ class StatisticsDataProcessor {
             language: language == "all" ? nil : language
         )
 
-        // Group by date bucket (day/week/month/year)
-        var buckets: [Date: [ErrorCategory: Int]] = [:]
+        // Group records by date bucket and track which categories each record has
+        var bucketRecordCounts: [Date: Int] = [:]
+        var bucketCategoryRecordCounts: [Date: [ErrorCategory: Int]] = [:]
 
         for record in records {
-            // Determine bucket date based on period
             let bucketDate: Date
             switch period {
             case .daily:
@@ -46,27 +46,32 @@ class StatisticsDataProcessor {
                 bucketDate = record.timestamp.startOfYear()
             }
 
-            // Count errors by category
-            for error in record.errors {
-                // Apply error type filter if specified
-                if let filterType = errorType, filterType != "ALL" {
-                    guard error.category.rawValue == filterType else { continue }
-                }
+            bucketRecordCounts[bucketDate, default: 0] += 1
 
-                if buckets[bucketDate] == nil {
-                    buckets[bucketDate] = [:]
+            // Count distinct categories present in this record (each category counted once per record)
+            let categoriesInRecord = Set(record.errors.map { $0.category })
+            for category in categoriesInRecord {
+                if let filterType = errorType, filterType != "ALL" {
+                    guard category.rawValue == filterType else { continue }
                 }
-                buckets[bucketDate]![error.category, default: 0] += 1
+                if bucketCategoryRecordCounts[bucketDate] == nil {
+                    bucketCategoryRecordCounts[bucketDate] = [:]
+                }
+                bucketCategoryRecordCounts[bucketDate]![category, default: 0] += 1
             }
         }
 
-        // Convert to ChartDataPoint array, sorted chronologically
-        return buckets.map { date, counts in
-            ChartDataPoint(date: date, errorCounts: counts)
+        // Convert to ChartDataPoint array with percentages
+        return bucketRecordCounts.map { date, totalRecords in
+            let categoryRecordCounts = bucketCategoryRecordCounts[date] ?? [:]
+            let rates: [ErrorCategory: Double] = categoryRecordCounts.mapValues { count in
+                Double(count) / Double(totalRecords) * 100.0
+            }
+            return ChartDataPoint(date: date, errorRates: rates, recordCount: totalRecords)
         }.sorted { $0.date < $1.date }
     }
 
-    // Process records into comparison data (total counts by category)
+    // Process records into comparison data (percentage of records with each error category)
     func processComparisonData(
         language: String?,
         errorType: String?,
@@ -79,22 +84,44 @@ class StatisticsDataProcessor {
             language: language == "all" ? nil : language
         )
 
-        // Count errors by category
-        var categoryCounts: [ErrorCategory: Int] = [:]
+        guard !records.isEmpty else { return [] }
+
+        // Count how many records have each error category (each category counted once per record)
+        var categoryRecordCounts: [ErrorCategory: Int] = [:]
 
         for record in records {
-            for error in record.errors {
-                // Apply error type filter if specified
+            let categoriesInRecord = Set(record.errors.map { $0.category })
+            for category in categoriesInRecord {
                 if let filterType = errorType, filterType != "ALL" {
-                    guard error.category.rawValue == filterType else { continue }
+                    guard category.rawValue == filterType else { continue }
                 }
-                categoryCounts[error.category, default: 0] += 1
+                categoryRecordCounts[category, default: 0] += 1
             }
         }
 
-        // Convert to ErrorComparisonData array, sorted by count descending
-        return categoryCounts.map { category, count in
-            ErrorComparisonData(category: category, count: count)
-        }.sorted { $0.count > $1.count }
+        let totalRecords = Double(records.count)
+
+        // Convert to ErrorComparisonData array, sorted by percentage descending
+        return categoryRecordCounts.map { category, count in
+            ErrorComparisonData(
+                category: category,
+                percentage: Double(count) / totalRecords * 100.0,
+                count: count
+            )
+        }.sorted { $0.percentage > $1.percentage }
+    }
+
+    // Get total record count for a date range
+    func totalRecordCount(
+        language: String?,
+        startDate: Date,
+        endDate: Date
+    ) -> Int {
+        let records = historyStore.fetchRecords(
+            from: startDate,
+            to: endDate,
+            language: language == "all" ? nil : language
+        )
+        return records.count
     }
 }

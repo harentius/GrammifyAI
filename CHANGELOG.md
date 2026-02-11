@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.3
+
+* Calculate statistics using relative value
+
 ## 0.8.2
 
 * Improve reading of release notes
