@@ -22,6 +22,7 @@ struct StatisticsUI: View {
     // Chart data
     @State private var trendData: [ChartDataPoint] = []
     @State private var comparisonData: [ErrorComparisonData] = []
+    @State private var totalEntries: Int = 0
 
     var body: some View {
         VStack(spacing: 16) {
@@ -108,33 +109,50 @@ struct StatisticsUI: View {
 
             Divider()
 
+            // Total entries info
+            HStack {
+                Text("Total entries in selected period: \(totalEntries)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal)
+
             // Charts Section (scrollable)
             ScrollView {
                 VStack(spacing: 24) {
                     // Line Chart: Trend over time
                     VStack(alignment: .leading) {
-                        Text("Error Trend Over Time")
+                        Text("Error Rate Over Time (%)")
                             .font(.headline)
                             .padding(.horizontal)
 
                         Chart(trendData) { dataPoint in
                             if selectedErrorType == "ALL" {
-                                // Show stacked lines for all error types
-                                ForEach(dataPoint.errorCounts.keys.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { category in
+                                ForEach(dataPoint.errorRates.keys.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { category in
                                     LineMark(
                                         x: .value("Date", dataPoint.date),
-                                        y: .value("Count", dataPoint.errorCounts[category] ?? 0)
+                                        y: .value("Rate (%)", dataPoint.errorRates[category] ?? 0)
                                     )
                                     .foregroundStyle(by: .value("Error Type", category.rawValue))
                                     .symbol(by: .value("Error Type", category.rawValue))
                                 }
                             } else {
-                                // Show single line for selected error type
                                 LineMark(
                                     x: .value("Date", dataPoint.date),
-                                    y: .value("Count", dataPoint.totalCount)
+                                    y: .value("Rate (%)", dataPoint.totalRate)
                                 )
                                 .foregroundStyle(.blue)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks(position: .leading) { value in
+                                AxisGridLine()
+                                AxisValueLabel {
+                                    if let v = value.as(Double.self) {
+                                        Text("\(v, specifier: "%.0f")%")
+                                    }
+                                }
                             }
                         }
                         .frame(height: 250)
@@ -145,16 +163,30 @@ struct StatisticsUI: View {
 
                     // Bar Chart: Error distribution
                     VStack(alignment: .leading) {
-                        Text("Error Distribution")
+                        Text("Error Distribution (% of entries)")
                             .font(.headline)
                             .padding(.horizontal)
 
                         Chart(comparisonData) { item in
                             BarMark(
                                 x: .value("Category", item.category.rawValue),
-                                y: .value("Count", item.count)
+                                y: .value("Rate (%)", item.percentage)
                             )
                             .foregroundStyle(by: .value("Category", item.category.rawValue))
+                            .annotation(position: .top) {
+                                Text("\(item.percentage, specifier: "%.1f")%")
+                                    .font(.caption2)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks(position: .leading) { value in
+                                AxisGridLine()
+                                AxisValueLabel {
+                                    if let v = value.as(Double.self) {
+                                        Text("\(v, specifier: "%.0f")%")
+                                    }
+                                }
+                            }
                         }
                         .frame(height: 250)
                         .padding()
@@ -222,6 +254,13 @@ struct StatisticsUI: View {
         comparisonData = processor.processComparisonData(
             language: selectedLanguage == "all" ? nil : selectedLanguage,
             errorType: selectedErrorType == "ALL" ? nil : selectedErrorType,
+            startDate: startDate,
+            endDate: endDate
+        )
+
+        // Get total entries count
+        totalEntries = processor.totalRecordCount(
+            language: selectedLanguage == "all" ? nil : selectedLanguage,
             startDate: startDate,
             endDate: endDate
         )

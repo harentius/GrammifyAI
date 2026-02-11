@@ -13,10 +13,13 @@ enum TimePeriod: String, CaseIterable {
 struct ChartDataPoint: Identifiable {
     let id = UUID()
     let date: Date
-    let errorCounts: [ErrorCategory: Int]
+    let errorRates: [ErrorCategory: Double]
+    let recordCount: Int
 
-    var totalCount: Int {
-        errorCounts.values.reduce(0, +)
+    var totalRate: Double {
+        guard recordCount > 0 else { return 0 }
+        // Overall % of records that had at least one error (stored separately)
+        return errorRates.values.max() ?? 0
     }
 }
 
@@ -24,6 +27,7 @@ struct ChartDataPoint: Identifiable {
 struct ErrorComparisonData: Identifiable {
     let id = UUID()
     let category: ErrorCategory
+    let percentage: Double
     let count: Int
 }
 
