@@ -60,6 +60,7 @@ struct SettingsUI: View {
                         Button("Clear History") {
                             showingClearConfirmation = true
                         }
+                        .foregroundColor(.white)
                         .buttonStyle(.borderedProminent)
                         .tint(.red)
                     }
@@ -79,6 +80,7 @@ struct SettingsUI: View {
                                 refreshHistoryCount()
                                 showingClearConfirmation = false
                             }
+                            .foregroundColor(.white)
                             .buttonStyle(.borderedProminent)
                             .tint(.red)
                         }

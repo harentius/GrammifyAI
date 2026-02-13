@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 jobs:
   build-and-release:
@@ -78,3 +79,59 @@ jobs:
             --title "GrammifyAI ${{ steps.version.outputs.VERSION }}" \
             --notes "${{ steps.extract_notes.outputs.RELEASE_NOTES }}" \
             --prerelease
+
+      - name: Download Sparkle
+        run: |
+          SPARKLE_VERSION="2.7.5"
+          curl -L -o Sparkle.tar.xz "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
+          mkdir -p Sparkle
+          tar -xf Sparkle.tar.xz -C Sparkle
+
+      - name: Sign ZIP with EdDSA
+        env:
+          SPARKLE_EDDSA_PRIVATE_KEY: ${{ secrets.SPARKLE_EDDSA_PRIVATE_KEY }}
+        run: |
+          SIGNATURE=$(echo -n "$SPARKLE_EDDSA_PRIVATE_KEY" | ./Sparkle/bin/sign_update "GrammifyAI-${{ steps.version.outputs.VERSION }}.zip" --ed-key-file -)
+          echo "SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
+
+      - name: Generate appcast
+        env:
+          SPARKLE_EDDSA_PRIVATE_KEY: ${{ secrets.SPARKLE_EDDSA_PRIVATE_KEY }}
+        run: |
+          REPO_URL="https://github.com/${{ github.repository }}/releases/download"
+
+          # Create a directory with the ZIP for generate_appcast
+          mkdir -p appcast_input
+          cp "GrammifyAI-${{ steps.version.outputs.VERSION }}.zip" appcast_input/
+
+          # Fetch existing appcast from gh-pages if it exists
+          git fetch origin gh-pages --depth=1 || true
+          if git show origin/gh-pages:appcast.xml > existing_appcast.xml 2>/dev/null; then
+            cp existing_appcast.xml appcast_input/appcast.xml
+          fi
+
+          echo -n "$SPARKLE_EDDSA_PRIVATE_KEY" > /tmp/sparkle_eddsa_key
+          ./Sparkle/bin/generate_appcast appcast_input \
+            --download-url-prefix "${REPO_URL}/${{ steps.version.outputs.VERSION }}/" \
+            --ed-key-file /tmp/sparkle_eddsa_key
+          rm -f /tmp/sparkle_eddsa_key
+
+          cp appcast_input/appcast.xml appcast.xml
+
+      - name: Publish appcast to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create or checkout gh-pages branch
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf . || true
+          fi
+
+          cp "${{ github.workspace }}/appcast.xml" appcast.xml
+          git add appcast.xml
+          git commit -m "Update appcast for ${{ steps.version.outputs.VERSION }}" || echo "No changes to commit"
+          git push origin gh-pages
