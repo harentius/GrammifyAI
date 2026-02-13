@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarContentUI: View {
     @StateObject var appState: AppState
+    @ObservedObject var checkForUpdatesViewModel: CheckForUpdatesViewModel
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -20,6 +21,11 @@ struct MenuBarContentUI: View {
                 Button("Statistics") {
                     appState.showStatisticsUI = true
                 }
+
+                Button("Check for Updates...") {
+                    checkForUpdatesViewModel.checkForUpdates()
+                }
+                .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
             }
 
             Divider()
@@ -42,6 +48,6 @@ struct MenuBarContentUI: View {
     let appState = AppState()
     appState.openAIKeySetUp = false
 
-    return MenuBarContentUI(appState: appState)
+    return MenuBarContentUI(appState: appState, checkForUpdatesViewModel: CheckForUpdatesViewModel())
         .frame(width: 300, height: 200)
 }

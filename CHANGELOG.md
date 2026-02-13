@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.4
+
+* Fix clear history button color
+* Add updates system
+
+
 ## 0.8.3
 
 * Calculate statistics using relative value

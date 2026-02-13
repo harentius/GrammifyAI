@@ -7,6 +7,7 @@ import SwiftData
 struct GrammifyAIApp: App {
     private var selectionManager = SelectionManager()
     @StateObject private var appState = AppState()
+    @StateObject private var checkForUpdatesViewModel = CheckForUpdatesViewModel()
     @Environment(\.openWindow) private var openWindow
     @State var observer: NSKeyValueObservation?
 
@@ -27,7 +28,7 @@ struct GrammifyAIApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuBarContentUI(appState: appState)
+            MenuBarContentUI(appState: appState, checkForUpdatesViewModel: checkForUpdatesViewModel)
                 .onAppear {
                     observer = NSApplication.shared.observe(\.keyWindow) { x, y in
                         if NSApplication.shared.keyWindow != nil {
