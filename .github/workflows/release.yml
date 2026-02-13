@@ -123,6 +123,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Save appcast before switching branches
+          cp appcast.xml /tmp/appcast.xml
+
           # Create or checkout gh-pages branch
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
             git checkout gh-pages
@@ -131,7 +134,7 @@ jobs:
             git rm -rf . || true
           fi
 
-          cp "${{ github.workspace }}/appcast.xml" appcast.xml
+          cp /tmp/appcast.xml appcast.xml
           git add appcast.xml
           git commit -m "Update appcast for ${{ steps.version.outputs.VERSION }}" || echo "No changes to commit"
           git push origin gh-pages
