@@ -82,7 +82,7 @@ jobs:
 
       - name: Download Sparkle
         run: |
-          SPARKLE_VERSION="2.7.5"
+          SPARKLE_VERSION="2.8.1"
           curl -L -o Sparkle.tar.xz "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
           mkdir -p Sparkle
           tar -xf Sparkle.tar.xz -C Sparkle
