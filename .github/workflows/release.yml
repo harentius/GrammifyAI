@@ -43,6 +43,15 @@ jobs:
           git tag "${{ steps.version.outputs.VERSION }}"
           git push origin "${{ steps.version.outputs.VERSION }}"
 
+      - name: Compute build number from version
+        id: build_number
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          IFS='.' read -r major minor patch <<< "$VERSION"
+          BUILD_NUMBER=$(( major * 10000 + minor * 100 + patch ))
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "Build number: $BUILD_NUMBER"
+
       - name: Build GrammifyAI
         run: |
           xcodebuild -project GrammifyAI.xcodeproj \
@@ -50,6 +59,7 @@ jobs:
             -configuration Release \
             -derivedDataPath DerivedData \
             -arch arm64 \
+            CURRENT_PROJECT_VERSION=${{ steps.build_number.outputs.BUILD_NUMBER }} \
             build
 
       - name: Package application
