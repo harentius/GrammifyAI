@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.6
+
+* Fixed: Migrate statistics when update the version
+
 ## 0.8.5
 
 * Fixed: Error state not refreshing after access attempt to inaccessible element.
