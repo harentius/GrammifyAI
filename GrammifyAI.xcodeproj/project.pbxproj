@@ -31,6 +31,7 @@
 		07DC23D52C67D0BD00DC5E7E /* PreconditionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */; };
 		1B7E02BA5D6D45A7AA69A990F061C46E2C68F13F00C8E193 /* ErrorCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */; };
 		90CBA398343F418E8E28C2EB3537628D2C68F13F00C8E193 /* CorrectionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */; };
+		B990DFD7620E76388D0F4326 /* SchemaVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6950462E524EE186E079838C /* SchemaVersions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		07DC23D42C67D0BD00DC5E7E /* PreconditionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreconditionsUI.swift; sourceTree = "<group>"; };
 		15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCategory.swift; sourceTree = "<group>"; };
 		ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionHistory.swift; sourceTree = "<group>"; };
+		6950462E524EE186E079838C /* SchemaVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaVersions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				07946AA12C5F7B6D00AE2FEE /* SettingsUI.swift */,
 				15DF353C55564BCE872E4642D013F16C2C68F13F00C8E193 /* ErrorCategory.swift */,
 				ACAFDEB5DF2E4BC4BA7705F4B79CBD332C68F13F00C8E193 /* CorrectionHistory.swift */,
+				6950462E524EE186E079838C /* SchemaVersions.swift */,
 				07946A9D2C5F7B6D00AE2FEE /* SuggestionUI.swift */,
 				075C39CB2C68F13F00C8E193 /* Result.swift */,
 				075C39CD2C68F2CA00C8E193 /* AXError.swift */,
@@ -240,6 +243,7 @@
 				07946AA72C5F7B6D00AE2FEE /* SettingsUI.swift in Sources */,
 				1B7E02BA5D6D45A7AA69A990F061C46E2C68F13F00C8E193 /* ErrorCategory.swift in Sources */,
 				90CBA398343F418E8E28C2EB3537628D2C68F13F00C8E193 /* CorrectionHistory.swift in Sources */,
+				B990DFD7620E76388D0F4326 /* SchemaVersions.swift in Sources */,
 				075C39CE2C68F2CA00C8E193 /* AXError.swift in Sources */,
 				07946AA62C5F7B6D00AE2FEE /* AppState.swift in Sources */,
 				07946AA82C5F7B6D00AE2FEE /* Constants.swift in Sources */,
@@ -394,7 +398,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.8.5;
+				MARKETING_VERSION = 0.8.6;
 				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -424,7 +428,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.8.5;
+				MARKETING_VERSION = 0.8.6;
 				PRODUCT_BUNDLE_IDENTIFIER = harentius.GrammifyAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
