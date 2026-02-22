@@ -29,6 +29,9 @@ final class AppState: ObservableObject {
     init() {
         checkPreconditions()
         KeyboardShortcuts.onKeyDown(for: .improveWriting) { [self] in
+            isAccessibilityAPIError = false
+            accessibilityAPIError = ""
+
             let selectionManager = SelectionManager()
             let selectedTextResult = selectionManager.getSelectedText()
 
