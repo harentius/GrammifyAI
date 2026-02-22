@@ -6,9 +6,9 @@
             <title>0.8.4</title>
             <pubDate>Fri, 13 Feb 2026 16:36:23 +0000</pubDate>
             <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>0.8.4</sparkle:shortVersionString>
+            <sparkle:shortVersionString>0.8.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.8.4/GrammifyAI-0.8.4.zip" length="1329855" type="application/octet-stream" sparkle:edSignature="f82w95Vy/a0fsEDhViVjOFmASABRYiEtfcenxpX8nSwAGU6XOxO+8XBn5t5Sr230SNu91E1JIRjMkCIUEoqtBQ=="/>
+            <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.8.5/GrammifyAI-0.8.5.zip" length="1330534" type="application/octet-stream" sparkle:edSignature="v3ldLKrxblDqK0387/W5X3ST+TWPWNl2OreAP7isW1ul4pX4fuD4u8HwIO64N6FQHCera3rRuM5XnFJts9NLAA=="/>
         </item>
     </channel>
 </rss>
