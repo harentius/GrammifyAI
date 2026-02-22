@@ -3,6 +3,14 @@
     <channel>
         <title>GrammifyAI</title>
         <item>
+            <title>0.8.6</title>
+            <pubDate>Sun, 22 Feb 2026 20:41:50 +0000</pubDate>
+            <sparkle:version>806</sparkle:version>
+            <sparkle:shortVersionString>0.8.6</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.8.6/GrammifyAI-0.8.6.zip" length="1332790" type="application/octet-stream" sparkle:edSignature="Ea48uYml+Bw+a3OVmYGbX2dpKjFfnSpBgeH9meTOhfNKRmAuiI05Zk6XcfCbT9p7Mf9krVhUXmyHU+JcFNxLAQ=="/>
+        </item>
+        <item>
             <title>0.8.5</title>
             <pubDate>Sun, 22 Feb 2026 16:50:42 +0000</pubDate>
             <sparkle:version>805</sparkle:version>
