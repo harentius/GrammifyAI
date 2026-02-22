@@ -125,6 +125,7 @@ jobs:
 
           # Save appcast before switching branches
           cp appcast.xml /tmp/appcast.xml
+          rm -f appcast.xml
 
           # Create or checkout gh-pages branch
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
