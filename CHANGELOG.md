@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5
+
+* Fixed: Error state not refreshing after access attempt to inaccessible element.
+
 ## 0.8.4
 
 * Fix clear history button color
