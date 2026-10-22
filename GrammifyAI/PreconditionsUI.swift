@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PreconditionsUI: View {
-    @StateObject var appState: AppState
+    @ObservedObject var appState: AppState
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -13,8 +13,20 @@ struct PreconditionsUI: View {
                 }
 
                 if !appState.accessibilityAPIPermissionSetUp {
-                    Text("Please add GrammifyAI access to Accessibility API")
-                        .foregroundStyle(.red)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Please grant GrammifyAI access to Accessibility API")
+                            .foregroundStyle(.red)
+
+                        HStack(spacing: 8) {
+                            Button("Grant Permission") {
+                                appState.requestAccessibilityPermission()
+                            }
+                            Button("Open System Settings") {
+                                appState.openAccessibilitySettings()
+                            }
+                        }
+                    }
+                    .padding([.bottom], 10)
                 }
             }
         }
@@ -24,6 +36,7 @@ struct PreconditionsUI: View {
 #Preview {
     let appState = AppState()
     appState.openAIKeySetUp = false
+    appState.accessibilityAPIPermissionSetUp = false
 
     return PreconditionsUI(appState: appState)
         .frame(width: 300, height: 200)

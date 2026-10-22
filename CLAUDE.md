@@ -87,7 +87,7 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 
 ## Important Implementation Details
 
-**Accessibility API:** The app requires `AXIsProcessTrusted()` to return true. When permission is not granted, operations fail with descriptive error codes (see `AXError.swift` for error code mapping).
+**Accessibility API:** The app requires `AXIsProcessTrusted()` to return true. When permission is not granted on launch, `AppState.requestAccessibilityPermission()` resets any stale TCC entry via `tccutil reset Accessibility` and calls `AXIsProcessTrustedWithOptions` with `kAXTrustedCheckOptionPrompt: true` to show the native macOS prompt, polling until permission is granted. When operations fail, descriptive error codes are returned (see `AXError.swift` for error code mapping).
 
 **API Token Storage:** The OpenAI API token is stored in `UserDefaults` **unencrypted**. This is documented in the README as a security consideration.
 

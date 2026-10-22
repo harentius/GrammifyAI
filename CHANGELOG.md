@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+* Automatically prompt for Accessibility permission on launch and reset stale TCC entries after app updates
+* Added quick-action buttons to request Accessibility permission or open System Settings directly
+* Live-poll Accessibility permission status so the UI updates immediately once enabled
+
 ## 0.9.0
 
 * Fixed: Statistics calculation, trend line rendering, date bucketing, and LLM error classification parsing
