@@ -4,9 +4,9 @@ import SwiftUI
 struct LlmClient {
     // Response structure expected from LLM
     struct CorrectionResponse: Codable {
-        let detectedLanguage: String
+        let detectedLanguage: String?
         let correctedText: String
-        let errors: [ErrorInfo]
+        let errors: [ErrorInfo]?
 
         struct ErrorInfo: Codable {
             let category: String
@@ -31,17 +31,14 @@ struct LlmClient {
 
     // Helper method to parse LLM response as JSON
     private func parseCorrectionResponse(_ content: String) -> CorrectionResponse? {
-        // Try to extract JSON from markdown code blocks if present
-        var jsonString = content
-        if let range = content.range(of: "```json\\s*([\\s\\S]*?)```", options: .regularExpression) {
-            let match = content[range]
-            jsonString = String(match).replacingOccurrences(of: "```json", with: "")
-                                      .replacingOccurrences(of: "```", with: "")
-                                      .trimmingCharacters(in: .whitespacesAndNewlines)
-        } else if let range = content.range(of: "```\\s*([\\s\\S]*?)```", options: .regularExpression) {
-            let match = content[range]
-            jsonString = String(match).replacingOccurrences(of: "```", with: "")
-                                      .trimmingCharacters(in: .whitespacesAndNewlines)
+        var jsonString = content.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Extract the outermost JSON object { ... } to handle markdown code fences
+        // and conversational text without breaking on inner backticks
+        if let firstBrace = jsonString.firstIndex(of: "{"),
+           let lastBrace = jsonString.lastIndex(of: "}"),
+           firstBrace < lastBrace {
+            jsonString = String(jsonString[firstBrace...lastBrace])
         }
 
         guard let data = jsonString.data(using: .utf8) else {
@@ -73,19 +70,21 @@ struct LlmClient {
         let aiPort = url?.port ?? 443
         let aiBasePath = url?.path ?? "/"
 
-        // Get error categories for all supported languages
-        let englishCategories = ErrorCategory.categoriesForLanguage("English")
-        let germanCategories = ErrorCategory.categoriesForLanguage("German")
+        // Get language-specific error categories without repeating universal ones
+        let universalCategories: [ErrorCategory] = [.SYN, .VOC, .PREP, .IDM, .REG, .ORT]
+        let englishSpecificCategories: [ErrorCategory] = [.TNS, .ASP, .ART]
+        let germanSpecificCategories: [ErrorCategory] = [.GEN, .CAS, .ADJ, .V_POS]
 
-        let englishList = englishCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
-        let germanList = germanCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
+        let universalList = universalCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
+        let englishList = englishSpecificCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
+        let germanList = germanSpecificCategories.map { "\($0.rawValue) (\($0.description))" }.joined(separator: ", ")
 
         let prompt = """
         Detect the language of the provided text, correct its writing, and classify all detected errors.
 
         Return your response as a JSON object with this exact structure:
         {
-          "detectedLanguage": "English" or "German",
+          "detectedLanguage": "English", "German", or detected language name,
           "correctedText": "the corrected version of the text",
           "errors": [
             {
@@ -98,7 +97,7 @@ struct LlmClient {
 
         Available error categories by language:
 
-        Universal (all languages): SYN (Syntax), VOC (Vocabulary), PREP (Prepositions), IDM (Idiomatics), REG (Register), ORT (Orthography)
+        Universal (all languages): \(universalList)
 
         English-specific: \(englishList)
 
@@ -161,24 +160,46 @@ struct LlmClient {
                 if let msg = decoded.choices.first?.message?.content, !msg.isEmpty {
                     // Try to parse the LLM response as JSON with error classification
                     if let correctionResponse = parseCorrectionResponse(msg) {
-                        let errors = correctionResponse.errors.compactMap { errorInfo -> CorrectionError? in
-                            guard let category = ErrorCategory(rawValue: errorInfo.category) else {
-                                return nil
+                        let textUnchanged = correctionResponse.correctedText.trimmingCharacters(in: .whitespacesAndNewlines) ==
+                            text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                        let errors: [CorrectionError]
+                        if textUnchanged {
+                            errors = []
+                        } else {
+                            errors = (correctionResponse.errors ?? []).compactMap { errorInfo -> CorrectionError? in
+                                guard let category = ErrorCategory.from(errorInfo.category) else {
+                                    NSLog("Unrecognized error category: \(errorInfo.category)")
+                                    return nil
+                                }
+                                // Skip false-positive error entries where original and corrected fragments are identical
+                                if let orig = errorInfo.originalFragment?.trimmingCharacters(in: .whitespacesAndNewlines),
+                                   let corr = errorInfo.correctedFragment?.trimmingCharacters(in: .whitespacesAndNewlines),
+                                   !orig.isEmpty, orig == corr {
+                                    return nil
+                                }
+                                return CorrectionError(
+                                    category: category,
+                                    originalFragment: errorInfo.originalFragment,
+                                    correctedFragment: errorInfo.correctedFragment
+                                )
                             }
-                            return CorrectionError(
-                                category: category,
-                                originalFragment: errorInfo.originalFragment,
-                                correctedFragment: errorInfo.correctedFragment
-                            )
                         }
+
+                        let language = ErrorCategory.normalizeLanguage(correctionResponse.detectedLanguage ?? "unknown")
                         return Result.success(
                             output: correctionResponse.correctedText,
                             errors: errors,
-                            detectedLanguage: correctionResponse.detectedLanguage
+                            detectedLanguage: language
                         )
                     } else {
-                        // Fallback: if LLM didn't return JSON, treat entire response as corrected text
-                        return Result.success(output: msg, errors: [], detectedLanguage: "Unknown")
+                        // If response looks like broken JSON, report parse error rather than polluting clipboard & stats
+                        let trimmedMsg = msg.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if trimmedMsg.hasPrefix("{") || trimmedMsg.contains("\"correctedText\"") {
+                            return Result.error(error: "Failed to parse correction response", errorDetails: msg)
+                        }
+                        // Fallback for plain-text models
+                        return Result.success(output: msg, errors: [], detectedLanguage: "unknown")
                     }
                 } else {
                     return Result.error(error: "Can't process API response", errorDetails: "Missing message content")

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+* Fixed: Statistics calculation, trend line rendering, date bucketing, and LLM error classification parsing
+* Fixed: Prevent duplicate history records and synchronize SwiftData context across windows
+
 ## 0.8.6
 
 * Fixed: Migrate statistics when update the version

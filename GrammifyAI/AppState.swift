@@ -16,6 +16,9 @@ final class AppState: ObservableObject {
     @Published var suggestion = ""
     @Published var detectedErrors: [CorrectionError] = []
     @Published var detectedLanguage: String = ""
+    @Published var requestID: UUID = UUID()
+    var lastProcessedRequestID: UUID? = nil
+    @Published var historyVersion: Int = 0
 
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
@@ -37,7 +40,9 @@ final class AppState: ObservableObject {
 
             if selectedTextResult.isSuccessful() {
                 originalText = selectedTextResult.output
+                requestID = UUID()
             } else {
+                originalText = ""
                 isAccessibilityAPIError = true
                 accessibilityAPIError = selectedTextResult.error
             }
