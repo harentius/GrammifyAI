@@ -13,8 +13,21 @@ struct SuggestionUI: View {
     var body: some View {
         VStack(alignment: .leading) {
             if (appState.isAccessibilityAPIError) {
-                Text(appState.accessibilityAPIError)
-                    .foregroundStyle(.red)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(appState.accessibilityAPIError)
+                        .foregroundStyle(.red)
+
+                    if !appState.accessibilityAPIPermissionSetUp {
+                        HStack(spacing: 8) {
+                            Button("Grant Accessibility Permission") {
+                                appState.requestAccessibilityPermission()
+                            }
+                            Button("Open System Settings") {
+                                appState.openAccessibilitySettings()
+                            }
+                        }
+                    }
+                }
             } else if (appState.isOpenAIError) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(appState.openAIError)

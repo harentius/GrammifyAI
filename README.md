@@ -19,13 +19,13 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 2.  Right-click the GrammifyAI app and select "Open" to bypass the initial security check. Grant permission to open it if prompted.
     * *Note:* If the app is blocked, go to **System Settings > Privacy & Security** and allow the app to open.
     <img width="500" alt="open-app" src="https://github.com/user-attachments/assets/2d495b93-0f91-4e36-8163-5bf2b295d43e" />  
-3.  Grant Accessibility permissions: Open **System Settings > Privacy & Security > Accessibility** and add GrammifyAI to the list.  
+3.  Grant Accessibility permissions: On first launch, macOS will automatically prompt you to grant Accessibility access. Click **Open System Settings** in the prompt (or use the **Grant Permission** button in the menu bar popover) and toggle **GrammifyAI** on in **System Settings > Privacy & Security > Accessibility**.  
     <img width="500" alt="accessibility" src="https://github.com/user-attachments/assets/ca8d366c-7685-4da6-a108-4b805bc66e77" />
 4.  Add your API key in the GrammifyAI settings. You can use any LLM with an OpenAI-compatible API.
 
 ## Updating the App
-1.  After installing a new version, you must **remove** GrammifyAI from the Accessibility permissions list and **add it again**.
-2.  You may need to repeat the "Right-click Open" step from the installation process.
+1.  After installing a new version, GrammifyAI will automatically reset the outdated Accessibility permission entry and prompt you to toggle **GrammifyAI** back on in **System Settings > Privacy & Security > Accessibility** (no need to manually remove and re-add the app).
+2.  If installing manually outside of in-app updates, you may need to repeat the "Right-click Open" step from the installation process.
 
 ## Usage
 1.  Select the text you want to enhance.
