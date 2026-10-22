@@ -25,8 +25,8 @@ final class CorrectionRecord {
         self.originalText = originalText
         self.correctedText = correctedText
         self.errors = errors
-        // Normalize language to lowercase for consistent querying
-        self.language = language.lowercased()
+        // Normalize language to lowercase canonical form for consistent querying
+        self.language = ErrorCategory.normalizeLanguage(language)
     }
 }
 
@@ -38,7 +38,7 @@ class HistoryStore: ObservableObject {
 
     init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
-        self.modelContext = ModelContext(modelContainer)
+        self.modelContext = modelContainer.mainContext
     }
 
     // Save a new correction record
@@ -70,20 +70,22 @@ class HistoryStore: ObservableObject {
 
     // Fetch records for a specific time period
     func fetchRecords(from startDate: Date, to endDate: Date, language: String? = nil) -> [CorrectionRecord] {
+        let actualStart = min(startDate, endDate)
+        let actualEnd = max(startDate, endDate)
         let predicate: Predicate<CorrectionRecord>
 
-        if let language = language {
-            // Language is stored in lowercase, so normalize the search term
-            let normalizedLanguage = language.lowercased()
+        let trimmedLang = language?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !trimmedLang.isEmpty && trimmedLang.lowercased() != "all" {
+            let normalizedLanguage = ErrorCategory.normalizeLanguage(trimmedLang)
             predicate = #Predicate<CorrectionRecord> { record in
-                record.timestamp >= startDate &&
-                record.timestamp <= endDate &&
+                record.timestamp >= actualStart &&
+                record.timestamp <= actualEnd &&
                 record.language == normalizedLanguage
             }
         } else {
             predicate = #Predicate<CorrectionRecord> { record in
-                record.timestamp >= startDate &&
-                record.timestamp <= endDate
+                record.timestamp >= actualStart &&
+                record.timestamp <= actualEnd
             }
         }
 
@@ -132,9 +134,9 @@ class HistoryStore: ObservableObject {
     func getRecordCount(language: String? = nil) -> Int {
         let predicate: Predicate<CorrectionRecord>?
 
-        if let language = language {
-            // Language is stored in lowercase, so normalize the search term
-            let normalizedLanguage = language.lowercased()
+        let trimmedLang = language?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !trimmedLang.isEmpty && trimmedLang.lowercased() != "all" {
+            let normalizedLanguage = ErrorCategory.normalizeLanguage(trimmedLang)
             predicate = #Predicate<CorrectionRecord> { record in
                 record.language == normalizedLanguage
             }
@@ -145,8 +147,7 @@ class HistoryStore: ObservableObject {
         let descriptor = FetchDescriptor<CorrectionRecord>(predicate: predicate)
 
         do {
-            let records = try modelContext.fetch(descriptor)
-            return records.count
+            return try modelContext.fetchCount(descriptor)
         } catch {
             NSLog("Failed to count records: \(error.localizedDescription)")
             return 0
@@ -178,6 +179,9 @@ class HistoryStore: ObservableObject {
         do {
             let oldRecords = try modelContext.fetch(descriptor)
             for record in oldRecords {
+                for error in record.errors {
+                    modelContext.delete(error)
+                }
                 modelContext.delete(record)
             }
             try modelContext.save()
@@ -190,6 +194,7 @@ class HistoryStore: ObservableObject {
     // Clear all history
     func clearHistory() {
         do {
+            try modelContext.delete(model: CorrectionError.self)
             try modelContext.delete(model: CorrectionRecord.self)
             try modelContext.save()
         } catch {
@@ -215,13 +220,20 @@ class HistoryStore: ObservableObject {
 
     // Get date range of all records (for determining available years)
     func getDateRange() -> (oldest: Date?, newest: Date?) {
-        let descriptor = FetchDescriptor<CorrectionRecord>(
+        var oldestDescriptor = FetchDescriptor<CorrectionRecord>(
             sortBy: [SortDescriptor(\.timestamp, order: .forward)]
         )
+        oldestDescriptor.fetchLimit = 1
+
+        var newestDescriptor = FetchDescriptor<CorrectionRecord>(
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        newestDescriptor.fetchLimit = 1
 
         do {
-            let records = try modelContext.fetch(descriptor)
-            return (records.first?.timestamp, records.last?.timestamp)
+            let oldest = try modelContext.fetch(oldestDescriptor).first?.timestamp
+            let newest = try modelContext.fetch(newestDescriptor).first?.timestamp
+            return (oldest, newest)
         } catch {
             return (nil, nil)
         }

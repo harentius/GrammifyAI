@@ -7,6 +7,7 @@ struct SuggestionUI: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @State private var historyStore: HistoryStore?
+    @State private var currentTask: Task<Void, Never>?
     var llmClient = LlmClient()
 
     var body: some View {
@@ -54,17 +55,28 @@ struct SuggestionUI: View {
                 dismiss()
             }
         }
-        .onChange(of: appState.originalText, initial: true) { oldState, newState in
-
-            if appState.preventAPIInteraction {
+        .onChange(of: appState.requestID, initial: true) { oldState, newState in
+            if appState.preventAPIInteraction || appState.isAccessibilityAPIError {
                 return
             }
 
+            let textToCheck = appState.originalText
+            guard !textToCheck.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                return
+            }
+
+            guard appState.lastProcessedRequestID != newState else {
+                return
+            }
+            appState.lastProcessedRequestID = newState
+
+            currentTask?.cancel()
             appState.cleanOpenAIRequestState()
 
-            Task {
+            currentTask = Task {
                 appState.isOpenAIRequestPending = true
-                let result = await llmClient.correctWritting(text: newState)
+                let result = await llmClient.correctWritting(text: textToCheck)
+                guard !Task.isCancelled else { return }
                 appState.isOpenAIRequestPending = false
 
                 if result.isSuccessful() {
@@ -75,11 +87,11 @@ struct SuggestionUI: View {
                     NSPasteboard.general.setString(appState.suggestion, forType: .string)
 
                     // Save to history with detected language
-                    await saveToHistory(
-                        originalText: newState,
+                    saveToHistory(
+                        originalText: textToCheck,
                         correctedText: result.output,
                         errors: result.errors,
-                        language: result.detectedLanguage.isEmpty ? "Unknown" : result.detectedLanguage
+                        language: result.detectedLanguage.isEmpty ? "unknown" : result.detectedLanguage
                     )
                 } else {
                     appState.isOpenAIError = true
@@ -98,9 +110,8 @@ struct SuggestionUI: View {
         language: String
     ) {
         // Initialize store if needed
-        if historyStore == nil,
-           let container = try? modelContext.container {
-            historyStore = HistoryStore(modelContainer: container)
+        if historyStore == nil {
+            historyStore = HistoryStore(modelContainer: modelContext.container)
         }
 
         // Save the record
@@ -110,6 +121,7 @@ struct SuggestionUI: View {
             errors: errors,
             language: language
         )
+        appState.historyVersion += 1
     }
 }
 

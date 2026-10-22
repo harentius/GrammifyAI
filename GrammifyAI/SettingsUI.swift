@@ -77,6 +77,7 @@ struct SettingsUI: View {
                             }
                             Button("Clear") {
                                 historyStore?.clearHistory()
+                                appState.historyVersion += 1
                                 refreshHistoryCount()
                                 showingClearConfirmation = false
                             }
@@ -111,6 +112,9 @@ struct SettingsUI: View {
                 initializeStoreAndRefresh()
             }
         }
+        .onChange(of: appState.historyVersion) { _, _ in
+            refreshHistoryCount()
+        }
         .onAppear {
             initializeStoreAndRefresh()
         }
@@ -119,9 +123,8 @@ struct SettingsUI: View {
     @MainActor
     private func initializeStoreAndRefresh() {
         // Initialize store if needed
-        if historyStore == nil,
-           let container = try? modelContext.container {
-            historyStore = HistoryStore(modelContainer: container)
+        if historyStore == nil {
+            historyStore = HistoryStore(modelContainer: modelContext.container)
         }
         refreshHistoryCount()
     }

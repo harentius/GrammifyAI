@@ -15,11 +15,17 @@ struct ChartDataPoint: Identifiable {
     let date: Date
     let errorRates: [ErrorCategory: Double]
     let recordCount: Int
+    let overallErrorRate: Double
+
+    init(date: Date, errorRates: [ErrorCategory: Double], recordCount: Int, overallErrorRate: Double = 0.0) {
+        self.date = date
+        self.errorRates = errorRates
+        self.recordCount = recordCount
+        self.overallErrorRate = overallErrorRate
+    }
 
     var totalRate: Double {
-        guard recordCount > 0 else { return 0 }
-        // Overall % of records that had at least one error (stored separately)
-        return errorRates.values.max() ?? 0
+        overallErrorRate
     }
 }
 
@@ -37,21 +43,23 @@ extension Date {
         Calendar.current.startOfDay(for: self)
     }
 
-    func startOfWeek() -> Date {
+    func endOfDay() -> Date {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
-        return calendar.date(from: components) ?? self
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        return calendar.date(byAdding: components, to: startOfDay()) ?? self
+    }
+
+    func startOfWeek() -> Date {
+        Calendar.current.dateInterval(of: .weekOfYear, for: self)?.start ?? self
     }
 
     func startOfMonth() -> Date {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: self)
-        return calendar.date(from: components) ?? self
+        Calendar.current.dateInterval(of: .month, for: self)?.start ?? self
     }
 
     func startOfYear() -> Date {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year], from: self)
-        return calendar.date(from: components) ?? self
+        Calendar.current.dateInterval(of: .year, for: self)?.start ?? self
     }
 }
