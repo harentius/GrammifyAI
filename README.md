@@ -54,5 +54,5 @@ I built this tool to get quick, one-shortcut corrections without needing to enga
 
 ### 2. Privacy & Security
 Your API key is used **solely** to connect with the specified host (default: OpenAI) to provide functionality. It is not shared with anyone else.
-* **Note:** The key is stored locally on your device in an unencrypted manner. Please use it at your own risk.
+* **Note:** The key is stored securely on your device using the macOS Keychain.
 * Feel free to review the code and build the app yourself if you have any security concerns! ;)
