@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+* Store API key securely in macOS Keychain with automatic migration from `UserDefaults`
+
 ## 0.10.0
 
 * Automatically prompt for Accessibility permission on launch and reset stale TCC entries after app updates
