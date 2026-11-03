@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1
+
+* Fixed: Store statistics database in an app-specific Application Support directory (`~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store`) with automatic migration from `default.store` to prevent data loss
+
 ## 0.11.0
 
 * Store API key securely in macOS Keychain with automatic migration from `UserDefaults`
