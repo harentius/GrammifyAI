@@ -91,6 +91,8 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 
 **API Token Storage:** The OpenAI API token is stored securely in the macOS Keychain (`kSecClassGenericPassword`) and cached in memory for the session, with automatic migration from legacy `UserDefaults` storage.
 
+**Statistics Storage:** Correction history and statistics are stored via SwiftData in an app-specific file at `~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store` (with one-time migration from the legacy `~/Library/Application Support/default.store` location).
+
 **Window Management:** The suggestion window uses `MenuBarExtra` with `.window` style and is shown/hidden via `openWindow(id: "suggestion")` and `controlActiveState` observation.
 
 **Keyboard Shortcut:** The shortcut is defined via the KeyboardShortcuts library with name `.improveWriting`. Default is `⌘ + U` but users can customize in settings.

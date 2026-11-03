@@ -17,7 +17,8 @@ struct GrammifyAIApp: App {
             CorrectionRecord.self,
             CorrectionError.self
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let storeURL = Self.resolveStoreURL()
+        let modelConfiguration = ModelConfiguration(schema: schema, url: storeURL)
 
         do {
             return try ModelContainer(
@@ -29,6 +30,50 @@ struct GrammifyAIApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+
+    private static func resolveStoreURL() -> URL {
+        let fileManager = FileManager.default
+        guard let appSupportDir = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            fatalError("Could not locate Application Support directory")
+        }
+
+        let bundleID = Bundle.main.bundleIdentifier ?? "harentius.GrammifyAI"
+        let appDirectory = appSupportDir.appendingPathComponent(bundleID, isDirectory: true)
+
+        do {
+            try fileManager.createDirectory(at: appDirectory, withIntermediateDirectories: true)
+        } catch {
+            NSLog("Failed to create application support directory: \(error.localizedDescription)")
+        }
+
+        let storeURL = appDirectory.appendingPathComponent("GrammifyAI.store")
+
+        // One-time migration from legacy shared ~/Library/Application Support/default.store
+        if !fileManager.fileExists(atPath: storeURL.path) {
+            let legacyStoreURL = appSupportDir.appendingPathComponent("default.store")
+            if fileManager.fileExists(atPath: legacyStoreURL.path) {
+                do {
+                    try fileManager.copyItem(at: legacyStoreURL, to: storeURL)
+                    for suffix in ["-wal", "-shm"] {
+                        let legacySidecar = URL(fileURLWithPath: legacyStoreURL.path + suffix)
+                        let newSidecar = URL(fileURLWithPath: storeURL.path + suffix)
+                        if fileManager.fileExists(atPath: legacySidecar.path) {
+                            try fileManager.copyItem(at: legacySidecar, to: newSidecar)
+                        }
+                    }
+                    NSLog("Migrated SwiftData store from \(legacyStoreURL.path) to \(storeURL.path)")
+                } catch {
+                    NSLog("Failed to migrate legacy SwiftData store: \(error.localizedDescription)")
+                    // Clean up partial copy if main or sidecar copy failed so ModelContainer starts cleanly
+                    for suffix in ["", "-wal", "-shm"] {
+                        try? fileManager.removeItem(atPath: storeURL.path + suffix)
+                    }
+                }
+            }
+        }
+
+        return storeURL
+    }
 
     var body: some Scene {
         MenuBarExtra {
