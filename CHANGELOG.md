@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.0
+
+* Added setting to open the suggestion window next to the selected text with automatic content-fitted window resizing
+
 ## 0.11.1
 
 * Fixed: Store statistics database in an app-specific Application Support directory (`~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store`) with automatic migration from `default.store` to prevent data loss

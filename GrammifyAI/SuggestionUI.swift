@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AppKit
 
 struct SuggestionUI: View {
     @StateObject var appState: AppState
@@ -10,58 +11,99 @@ struct SuggestionUI: View {
     @State private var currentTask: Task<Void, Never>?
     var llmClient = LlmClient()
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            if (appState.isAccessibilityAPIError) {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(appState.accessibilityAPIError)
-                        .foregroundStyle(.red)
+    private var isNearSelectionMode: Bool {
+        appState.selectionAnchorRect != nil
+    }
 
-                    if !appState.accessibilityAPIPermissionSetUp {
-                        HStack(spacing: 8) {
-                            Button("Grant Accessibility Permission") {
-                                appState.requestAccessibilityPermission()
-                            }
-                            Button("Open System Settings") {
-                                appState.openAccessibilitySettings()
-                            }
+    private var resizeStateHash: Int {
+        var hasher = Hasher()
+        hasher.combine(appState.windowPositionToken)
+        hasher.combine(appState.isOpenAIRequestPending)
+        hasher.combine(appState.isOpenAIError)
+        hasher.combine(appState.isAccessibilityAPIError)
+        hasher.combine(appState.originalText)
+        hasher.combine(appState.suggestion)
+        hasher.combine(appState.openAIError)
+        hasher.combine(appState.errorDetails)
+        hasher.combine(appState.accessibilityAPIError)
+        return hasher.finalize()
+    }
+
+    @ViewBuilder
+    private var suggestionContent: some View {
+        if (appState.isAccessibilityAPIError) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(appState.accessibilityAPIError)
+                    .foregroundStyle(.red)
+
+                if !appState.accessibilityAPIPermissionSetUp {
+                    HStack(spacing: 8) {
+                        Button("Grant Accessibility Permission") {
+                            appState.requestAccessibilityPermission()
+                        }
+                        Button("Open System Settings") {
+                            appState.openAccessibilitySettings()
                         }
                     }
                 }
-            } else if (appState.isOpenAIError) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(appState.openAIError)
-                        .foregroundColor(.red)
-                        .font(.headline)
-                    if !appState.errorDetails.isEmpty {
-                        Text("Server Response:")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        ScrollView {
-                            Text(appState.errorDetails)
-                                .foregroundColor(.gray)
-                                .font(.footnote)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .textSelection(.enabled)
-                        }
-                        .frame(maxHeight: 200)
-                    }
-                }
-            } else if (appState.isOpenAIRequestPending) {
-                Text("API request...").foregroundStyle(.blue)
-            } else {
-                Text(appState.originalText).foregroundStyle(.yellow)
-                Divider()
-
-                Text(DiffChecker.diffCheck(incorrectString: appState.originalText, correctString: appState.suggestion))
-                Divider()
-
-                Text("Suggestion is copied to the clipboard")
-                    .italic()
-                    .foregroundColor(.gray)
             }
-        }.padding()
-        .frame(minWidth: 600, minHeight: 300)
+        } else if (appState.isOpenAIError) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(appState.openAIError)
+                    .foregroundColor(.red)
+                    .font(.headline)
+                if !appState.errorDetails.isEmpty {
+                    Text("Server Response:")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    ScrollView {
+                        Text(appState.errorDetails)
+                            .foregroundColor(.gray)
+                            .font(.footnote)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .textSelection(.enabled)
+                    }
+                    .frame(maxHeight: 200)
+                }
+            }
+        } else if (appState.isOpenAIRequestPending) {
+            Text("API request...").foregroundStyle(.blue)
+        } else {
+            Text(appState.originalText).foregroundStyle(.yellow)
+            Divider()
+
+            Text(DiffChecker.diffCheck(incorrectString: appState.originalText, correctString: appState.suggestion))
+            Divider()
+
+            Text("Suggestion is copied to the clipboard")
+                .italic()
+                .foregroundColor(.gray)
+        }
+    }
+
+    var body: some View {
+        Group {
+            if isNearSelectionMode {
+                AutoSizingVStackLayout(minWidth: 240, maxWidth: 520, spacing: 8) {
+                    suggestionContent
+                }
+                .padding()
+                .fixedSize(horizontal: true, vertical: true)
+            } else {
+                VStack(alignment: .leading) {
+                    suggestionContent
+                }
+                .padding()
+                .frame(minWidth: 600, minHeight: 300)
+            }
+        }
+        .background(
+            SuggestionWindowPositioner(
+                anchorRect: appState.selectionAnchorRect,
+                positionToken: appState.windowPositionToken,
+                resizeStateHash: resizeStateHash
+            )
+        )
         .onChange(of: controlActiveState) { oldState, newState in
             if newState == .inactive {
                 appState.showSuggestionUI = false
@@ -135,6 +177,167 @@ struct SuggestionUI: View {
             language: language
         )
         appState.historyVersion += 1
+    }
+}
+
+private struct AutoSizingVStackLayout: Layout {
+    let minWidth: CGFloat
+    let maxWidth: CGFloat
+    let spacing: CGFloat
+
+    private func resolvedWidth(for subviews: Subviews) -> CGFloat {
+        var widest: CGFloat = minWidth
+        for subview in subviews {
+            let ideal = subview.sizeThatFits(.unspecified)
+            // Ignore Divider's tiny ideal width or unbounded widths; clamp to maxWidth
+            if ideal.width > widest {
+                widest = min(ideal.width, maxWidth)
+            }
+        }
+        return min(max(widest, minWidth), maxWidth)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+        let width = resolvedWidth(for: subviews)
+        let childProposal = ProposedViewSize(width: width, height: nil)
+
+        var totalHeight: CGFloat = 0
+        for (index, subview) in subviews.enumerated() {
+            let size = subview.sizeThatFits(childProposal)
+            totalHeight += size.height
+            if index < subviews.count - 1 {
+                totalHeight += spacing
+            }
+        }
+
+        return CGSize(width: width, height: totalHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let width = bounds.width
+        let childProposal = ProposedViewSize(width: width, height: nil)
+        var currentY = bounds.minY
+
+        for (index, subview) in subviews.enumerated() {
+            let size = subview.sizeThatFits(childProposal)
+            subview.place(
+                at: CGPoint(x: bounds.minX, y: currentY),
+                anchor: .topLeading,
+                proposal: ProposedViewSize(width: width, height: size.height)
+            )
+            currentY += size.height
+            if index < subviews.count - 1 {
+                currentY += spacing
+            }
+        }
+    }
+}
+
+private struct SuggestionWindowPositioner: NSViewRepresentable {
+    let anchorRect: CGRect?
+    let positionToken: UUID
+    let resizeStateHash: Int
+
+    func makeNSView(context: Context) -> PositioningNSView {
+        let view = PositioningNSView()
+        view.anchorRect = anchorRect
+        view.positionToken = positionToken
+        view.resizeStateHash = resizeStateHash
+        return view
+    }
+
+    func updateNSView(_ nsView: PositioningNSView, context: Context) {
+        nsView.anchorRect = anchorRect
+        nsView.positionToken = positionToken
+        nsView.resizeStateHash = resizeStateHash
+        nsView.applyPositionIfNeeded()
+    }
+
+    final class PositioningNSView: NSView {
+        var anchorRect: CGRect?
+        var positionToken: UUID = UUID()
+        var resizeStateHash: Int = 0
+        private var lastAppliedToken: UUID?
+        private var lastAppliedResizeHash: Int?
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            lastAppliedToken = nil
+            lastAppliedResizeHash = nil
+            applyPositionIfNeeded()
+        }
+
+        func applyPositionIfNeeded() {
+            guard let window = self.window else { return }
+
+            let tokenChanged = (lastAppliedToken != positionToken)
+            let resizeChanged = (lastAppliedResizeHash != resizeStateHash)
+
+            guard tokenChanged || (anchorRect != nil && resizeChanged) else {
+                return
+            }
+
+            lastAppliedToken = positionToken
+            lastAppliedResizeHash = resizeStateHash
+            let rect = anchorRect
+
+            Self.position(window: window, near: rect, centerIfNil: tokenChanged)
+            DispatchQueue.main.async { [weak window] in
+                guard let window = window else { return }
+                Self.position(window: window, near: rect, centerIfNil: tokenChanged)
+            }
+        }
+
+        private static func position(window: NSWindow, near anchorRect: CGRect?, centerIfNil: Bool) {
+            guard let anchorRect = anchorRect else {
+                if window.frame.width < 600 || window.frame.height < 300 {
+                    window.setContentSize(NSSize(width: 600, height: 300))
+                }
+                if centerIfNil {
+                    window.center()
+                }
+                return
+            }
+
+            let anchorPoint = CGPoint(x: anchorRect.midX, y: anchorRect.midY)
+            let screen = NSScreen.screens.first(where: { NSMouseInRect(anchorPoint, $0.frame, false) })
+                ?? NSScreen.main
+                ?? NSScreen.screens.first
+
+            guard let visibleFrame = screen?.visibleFrame else {
+                window.center()
+                return
+            }
+
+            if let contentView = window.contentView {
+                contentView.layoutSubtreeIfNeeded()
+                let fitting = contentView.fittingSize
+                if fitting.width > 0 && fitting.height > 0 {
+                    let targetContentSize = NSSize(
+                        width: min(max(fitting.width, 260), visibleFrame.width - 32),
+                        height: min(max(fitting.height, 48), visibleFrame.height - 64)
+                    )
+                    window.setContentSize(targetContentSize)
+                }
+            }
+
+            let windowSize = window.frame.size
+            let spacing: CGFloat = 8
+
+            let minX = visibleFrame.minX
+            let maxX = max(minX, visibleFrame.maxX - windowSize.width)
+            let targetX = min(max(anchorRect.minX, minX), maxX)
+
+            let minY = visibleFrame.minY
+            let maxY = max(minY, visibleFrame.maxY - windowSize.height)
+            let belowY = anchorRect.minY - windowSize.height - spacing
+            let aboveY = anchorRect.maxY + spacing
+            let rawY = (belowY >= minY) ? belowY : aboveY
+            let targetY = min(max(rawY, minY), maxY)
+
+            window.setFrameOrigin(NSPoint(x: targetX, y: targetY))
+        }
     }
 }
 

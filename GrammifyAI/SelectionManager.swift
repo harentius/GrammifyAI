@@ -1,5 +1,6 @@
 import Foundation
 import ApplicationServices
+import AppKit
 
 struct SelectionManager {
     var systemWideElement = AXUIElementCreateSystemWide()
@@ -20,6 +21,66 @@ struct SelectionManager {
         }
 
         return Result.success(output: selectedTextElement as! String)
+    }
+
+    /// Returns the screen rectangle (in AppKit bottom-left screen coordinates) of the currently
+    /// selected text via the Accessibility API, falling back to the current mouse cursor location
+    /// when an application (such as Electron/Chromium apps) does not report selection bounds.
+    func getSelectionAnchorRect() -> CGRect {
+        var focusedUIElement: AnyObject?
+        let focusedError = AXUIElementCopyAttributeValue(
+            systemWideElement,
+            kAXFocusedUIElementAttribute as CFString,
+            &focusedUIElement
+        )
+
+        if focusedError == .success, let elementRef = focusedUIElement {
+            let element = elementRef as! AXUIElement
+            var rangeValue: AnyObject?
+            let rangeError = AXUIElementCopyAttributeValue(
+                element,
+                kAXSelectedTextRangeAttribute as CFString,
+                &rangeValue
+            )
+
+            if rangeError == .success,
+               let rangeRef = rangeValue,
+               CFGetTypeID(rangeRef) == AXValueGetTypeID() {
+                let axRange = rangeRef as! AXValue
+                var boundsValue: AnyObject?
+                let boundsError = AXUIElementCopyParameterizedAttributeValue(
+                    element,
+                    kAXBoundsForRangeParameterizedAttribute as CFString,
+                    axRange,
+                    &boundsValue
+                )
+
+                if boundsError == .success,
+                   let boundsRef = boundsValue,
+                   CFGetTypeID(boundsRef) == AXValueGetTypeID() {
+                    let axBounds = boundsRef as! AXValue
+                    var cgRect = CGRect.zero
+                    if AXValueGetValue(axBounds, .cgRect, &cgRect),
+                       !cgRect.isNull,
+                       !cgRect.isInfinite,
+                       (cgRect.width > 0 || cgRect.height > 0),
+                       cgRect.origin != .zero {
+                        let primaryScreenHeight = NSScreen.screens.first?.frame.height
+                            ?? NSScreen.main?.frame.height
+                            ?? 0
+                        let cocoaY = primaryScreenHeight - cgRect.origin.y - cgRect.size.height
+                        return CGRect(
+                            x: cgRect.origin.x,
+                            y: cocoaY,
+                            width: cgRect.size.width,
+                            height: cgRect.size.height
+                        )
+                    }
+                }
+            }
+        }
+
+        return CGRect(origin: NSEvent.mouseLocation, size: .zero)
     }
 
     private static func describeError(code: AXError, context: String) -> String {

@@ -8,6 +8,7 @@ struct SettingsManager {
     private static let SETTING_AI_API_URL = "API_URL"
     private static let SETTING_AI_MODEL = "AI_MODEL"
     private static let SETTING_LAUNCH_AT_LOGIN = "LAUNCH_AT_LOGIN"
+    private static let SETTING_OPEN_NEAR_SELECTION = "OPEN_NEAR_SELECTION"
 
     private static var cachedApiToken: String?
 
@@ -183,5 +184,13 @@ struct SettingsManager {
             // Older macOS versions require a helper login item; not implemented here
             NSLog("LaunchAtLogin requires macOS 13+ or a helper login item on older systems.")
         }
+    }
+
+    static public func getOpenNearSelection() -> Bool {
+        return UserDefaults.standard.bool(forKey: SettingsManager.SETTING_OPEN_NEAR_SELECTION)
+    }
+
+    static public func setOpenNearSelection(enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: SettingsManager.SETTING_OPEN_NEAR_SELECTION)
     }
 }

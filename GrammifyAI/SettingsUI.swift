@@ -10,6 +10,7 @@ struct SettingsUI: View {
     @State private var model: String = SettingsManager.getAIModel()
     @State private var openAIKey: String = SettingsManager.getAIApiToken()
     @State private var launchAtLogin: Bool = SettingsManager.getLaunchAtLogin()
+    @State private var openNearSelection: Bool = SettingsManager.getOpenNearSelection()
     @State private var historyCount: Int = 0
     @State private var showingClearConfirmation: Bool = false
 
@@ -43,6 +44,10 @@ struct SettingsUI: View {
 
                 HStack {
                     Toggle("Launch at Login", isOn: $launchAtLogin)
+                }
+
+                HStack {
+                    Toggle("Open suggestion near selected text", isOn: $openNearSelection)
                 }
 
                 Divider()
@@ -96,6 +101,7 @@ struct SettingsUI: View {
                         SettingsManager.setAIUrl(url: apiUrl)
                         SettingsManager.setAIModel(model: model)
                         SettingsManager.setLaunchAtLogin(enabled: launchAtLogin)
+                        SettingsManager.setOpenNearSelection(enabled: openNearSelection)
 
                         appState.checkPreconditions()
                         appState.showSettingsUI = false
