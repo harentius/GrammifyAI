@@ -3,6 +3,14 @@
     <channel>
         <title>GrammifyAI</title>
         <item>
+            <title>0.12.0</title>
+            <pubDate>Mon, 09 Nov 2026 18:22:09 +0000</pubDate>
+            <sparkle:version>1200</sparkle:version>
+            <sparkle:shortVersionString>0.12.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.12.0/GrammifyAI-0.12.0.zip" length="1390544" type="application/octet-stream" sparkle:edSignature="Z0Alrp8GDsziz3Z4/QELVP2IJp445I6xwzOoTe98oXRAM3/Yd8c1LKO5K5d+ZU/sjQyZdqxvR70g0jAc/HtUCw=="/>
+        </item>
+        <item>
             <title>0.11.1</title>
             <pubDate>Tue, 03 Nov 2026 17:29:46 +0000</pubDate>
             <sparkle:version>1101</sparkle:version>
@@ -17,14 +25,6 @@
             <sparkle:shortVersionString>0.11.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
             <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.11.0/GrammifyAI-0.11.0.zip" length="1365211" type="application/octet-stream" sparkle:edSignature="YbQWgdYvTUiOGEziXEoru4ctJC+ITfMd8Cp5hSft6MR7qPeodK07W5JC47XqJKrL20FPhEo1Bnjjf5l5gkasDg=="/>
-        </item>
-        <item>
-            <title>0.10.0</title>
-            <pubDate>Thu, 22 Oct 2026 20:59:07 +0000</pubDate>
-            <sparkle:version>1000</sparkle:version>
-            <sparkle:shortVersionString>0.10.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/harentius/GrammifyAI/releases/download/0.10.0/GrammifyAI-0.10.0.zip" length="1360354" type="application/octet-stream" sparkle:edSignature="NOcEKwXUwfBC53git/XRRnDSWjCyiFRvF/LDAgBCQKlnUdB5uOJw4UxQpZg60+tuIeDfvb3lilwbM1USZqbMBA=="/>
         </item>
     </channel>
 </rss>
