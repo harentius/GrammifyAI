@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+killall GrammifyAI 2>/dev/null || true
+xcodebuild -scheme GrammifyAI -configuration Release -derivedDataPath ./DerivedData build
+open ./DerivedData/Build/Products/Release/GrammifyAI.app

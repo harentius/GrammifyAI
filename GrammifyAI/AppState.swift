@@ -20,6 +20,8 @@ final class AppState: ObservableObject {
     @Published var requestID: UUID = UUID()
     var lastProcessedRequestID: UUID? = nil
     @Published var historyVersion: Int = 0
+    @Published var selectionAnchorRect: CGRect? = nil
+    @Published var windowPositionToken: UUID = UUID()
 
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
@@ -49,6 +51,13 @@ final class AppState: ObservableObject {
 
             let selectionManager = SelectionManager()
             let selectedTextResult = selectionManager.getSelectedText()
+
+            if SettingsManager.getOpenNearSelection() {
+                selectionAnchorRect = selectionManager.getSelectionAnchorRect()
+            } else {
+                selectionAnchorRect = nil
+            }
+            windowPositionToken = UUID()
 
             if selectedTextResult.isSuccessful() {
                 originalText = selectedTextResult.output
