@@ -23,10 +23,81 @@ struct SuggestionUI: View {
         hasher.combine(appState.isAccessibilityAPIError)
         hasher.combine(appState.originalText)
         hasher.combine(appState.suggestion)
+        hasher.combine(appState.detectedErrors.count)
+        for error in appState.detectedErrors {
+            hasher.combine(error.category.rawValue)
+            hasher.combine(error.originalFragment)
+            hasher.combine(error.correctedFragment)
+        }
         hasher.combine(appState.openAIError)
         hasher.combine(appState.errorDetails)
         hasher.combine(appState.accessibilityAPIError)
         return hasher.finalize()
+    }
+
+    private struct ErrorBadgeItem: Identifiable {
+        let category: ErrorCategory
+        let tooltips: [String]
+        var id: String { category.rawValue }
+    }
+
+    private var groupedErrorBadges: [ErrorBadgeItem] {
+        var seen: [ErrorCategory: Int] = [:]
+        var items: [ErrorBadgeItem] = []
+
+        for error in appState.detectedErrors {
+            let orig = error.originalFragment?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let corr = error.correctedFragment?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let tooltip: String? = (!orig.isEmpty || !corr.isEmpty) ? "\"\(orig)\" → \"\(corr)\"" : nil
+
+            if let idx = seen[error.category] {
+                if let tooltip = tooltip, !items[idx].tooltips.contains(tooltip) {
+                    items[idx] = ErrorBadgeItem(
+                        category: error.category,
+                        tooltips: items[idx].tooltips + [tooltip]
+                    )
+                }
+            } else {
+                seen[error.category] = items.count
+                items.append(ErrorBadgeItem(
+                    category: error.category,
+                    tooltips: tooltip.map { [$0] } ?? []
+                ))
+            }
+        }
+
+        return items
+    }
+
+    @ViewBuilder
+    private var errorCategoriesView: some View {
+        if appState.detectedErrors.isEmpty {
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.circle.fill")
+                Text("Perfect — no errors found")
+            }
+            .font(.caption)
+            .fontWeight(.medium)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Color.green.opacity(0.15))
+            .foregroundStyle(.green)
+            .clipShape(Capsule())
+        } else {
+            FlowLayout(horizontalSpacing: 6, verticalSpacing: 6) {
+                ForEach(groupedErrorBadges) { item in
+                    Text("\(item.category.rawValue) · \(item.category.description)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.accentColor.opacity(0.15))
+                        .foregroundStyle(Color.accentColor)
+                        .clipShape(Capsule())
+                        .help(item.tooltips.joined(separator: "\n"))
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -73,6 +144,7 @@ struct SuggestionUI: View {
             Divider()
 
             Text(DiffChecker.diffCheck(incorrectString: appState.originalText, correctString: appState.suggestion))
+            errorCategoriesView
             Divider()
 
             Text("Suggestion is copied to the clipboard")
@@ -177,6 +249,65 @@ struct SuggestionUI: View {
             language: language
         )
         appState.historyVersion += 1
+    }
+}
+
+private struct FlowLayout: Layout {
+    var horizontalSpacing: CGFloat = 6
+    var verticalSpacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+        let maxWidth = proposal.width ?? .infinity
+
+        var currentX: CGFloat = 0
+        var currentRowHeight: CGFloat = 0
+        var totalHeight: CGFloat = 0
+        var maxRowWidth: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if currentX > 0 && currentX + size.width > maxWidth {
+                maxRowWidth = max(maxRowWidth, currentX - horizontalSpacing)
+                totalHeight += currentRowHeight + verticalSpacing
+                currentX = 0
+                currentRowHeight = 0
+            }
+            currentX += size.width + horizontalSpacing
+            currentRowHeight = max(currentRowHeight, size.height)
+        }
+
+        if currentX > 0 {
+            maxRowWidth = max(maxRowWidth, currentX - horizontalSpacing)
+            totalHeight += currentRowHeight
+        }
+
+        return CGSize(width: maxRowWidth, height: totalHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        let maxWidth = bounds.width > 0 ? bounds.width : (proposal.width ?? .infinity)
+
+        var currentX: CGFloat = bounds.minX
+        var currentY: CGFloat = bounds.minY
+        var currentRowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if currentX > bounds.minX && (currentX - bounds.minX) + size.width > maxWidth {
+                currentX = bounds.minX
+                currentY += currentRowHeight + verticalSpacing
+                currentRowHeight = 0
+            }
+            subview.place(
+                at: CGPoint(x: currentX, y: currentY),
+                anchor: .topLeading,
+                proposal: ProposedViewSize(width: size.width, height: size.height)
+            )
+            currentX += size.width + horizontalSpacing
+            currentRowHeight = max(currentRowHeight, size.height)
+        }
     }
 }
 
@@ -345,6 +476,10 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
     let appState = AppState()
     appState.originalText = "I a supor original text"
     appState.suggestion = "I am corrected text"
+    appState.detectedErrors = [
+        CorrectionError(category: .SYN, originalFragment: "I a", correctedFragment: "I am"),
+        CorrectionError(category: .ORT, originalFragment: "supor", correctedFragment: "super")
+    ]
     appState.isOpenAIRequestPending = false
     appState.preventAPIInteraction = true
 
