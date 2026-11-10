@@ -1,12 +1,13 @@
 # Changelog
 
-## 0.13.0
+## 0.13.1
 
 * Word-level diff rendering in the suggestion window for cleaner, more readable corrections
 * Display detected error category badges with hover tooltips (or a 'no errors found' badge) in the suggestion popup
 * Improved Statistics view: error-free vs. with-errors summary breakdown, descriptive chart legends, calendar-aligned X-axis labels, steppers for period filters, full text in CSV export, and a Clear History action
 * Prevent duplicate Suggestion and Statistics windows by using single-instance Window scenes
 * Improved LLM integration: separate system and user messages, request structured JSON output with low temperature (0.1), and support custom API URLs without forcing port 443
+* Fix CI release pipeline handling of release notes and remote tag checks
 
 ## 0.12.0
 
