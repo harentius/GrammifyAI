@@ -83,11 +83,12 @@ jobs:
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_NOTES: ${{ steps.extract_notes.outputs.RELEASE_NOTES }}
         run: |
           gh release create "${{ steps.version.outputs.VERSION }}" \
             "GrammifyAI-${{ steps.version.outputs.VERSION }}.zip" \
             --title "GrammifyAI ${{ steps.version.outputs.VERSION }}" \
-            --notes "${{ steps.extract_notes.outputs.RELEASE_NOTES }}" \
+            --notes "$RELEASE_NOTES" \
             --prerelease
 
       - name: Download Sparkle
