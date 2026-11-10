@@ -16,7 +16,7 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 ## Features
 
 * **System-Wide Shortcut:** Trigger corrections anywhere with `⌘ + U` (or set your own shortcut in Settings).
-* **Visual Diff & Auto-Copy:** See exact additions and deletions color-coded in a diff view, with the corrected text automatically copied to your clipboard.
+* **Visual Diff & Auto-Copy:** See exact word-level additions and deletions color-coded in a diff view alongside detected error category badges (hover to inspect specific fragments), with the corrected text automatically copied to your clipboard.
 * **Floating Popup Near Selection:** Optionally open a compact, auto-sized suggestion popup right next to your selected text instead of a centered window.
 * **Writing Statistics & Error Classification:** Automatically detects the language of your text, categorizes mistakes (Syntax, Vocabulary, Prepositions, Idiomatics, Register, Orthography, plus language-specific categories for **German** and **English**), and charts your error trends over time with CSV export.
 * **OpenAI-Compatible API Support:** Defaults to OpenAI (`https://api.openai.com` with `gpt-4o-mini`), or point it to any OpenAI-compatible endpoint (e.g., OpenRouter, Groq, Ollama, LM Studio).
@@ -80,5 +80,5 @@ I built this tool to get quick, one-shortcut corrections without needing to enga
 ### 2. Privacy & Security
 Your API key is used **solely** to connect with the specified host (default: OpenAI) to provide functionality. It is not shared with anyone else.
 * **API Key Storage:** Stored securely on your device using the macOS Keychain.
-* **Correction History & Statistics:** Stored strictly locally on your Mac (`~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store`) and can be cleared at any time from **Settings > Clear History**.
+* **Correction History & Statistics:** Stored strictly locally on your Mac (`~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store`) and can be cleared at any time from **Settings > Clear History** or **Statistics > Clear History…**.
 * Feel free to review the code and build the app yourself if you have any security concerns! ;)
