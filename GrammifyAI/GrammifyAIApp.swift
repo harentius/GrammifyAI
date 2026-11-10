@@ -90,7 +90,7 @@ struct GrammifyAIApp: App {
             Image(systemName: "wand.and.stars")
         }.menuBarExtraStyle(.window)
 
-        WindowGroup("Suggestion", id: "suggestion") {
+        Window("Suggestion", id: "suggestion") {
             SuggestionUI(appState: appState)
                 .modelContainer(modelContainer)
         }
@@ -102,8 +102,14 @@ struct GrammifyAIApp: App {
                 openWindow(id: "suggestion")
             }
         }
+        .onChange(of: appState.windowPositionToken) { _, _ in
+            if appState.showSuggestionUI {
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                openWindow(id: "suggestion")
+            }
+        }
 
-        WindowGroup("Statistics", id: "statistics") {
+        Window("Statistics", id: "statistics") {
             StatisticsUI(appState: appState)
                 .modelContainer(modelContainer)
         }

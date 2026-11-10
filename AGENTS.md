@@ -50,20 +50,19 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 - Reads `kAXSelectedTextAttribute` from focused element
 - Returns `Result` type with success/error state
 
-**LlmClient.swift** - LLM API integration
-- Sends text to OpenAI-compatible endpoint
-- Constructs prompt: "Correct the writing of provided text. Response only with updated version, without any additional explanations."
+**LlmClient.swift** (`OpenAIHelper.swift`) - LLM API integration
+- Sends text to OpenAI-compatible endpoint using structured `system` and `user` messages with `response_format: json_object` and `temperature: 0.1`
 - Supports custom API URLs via settings (defaults to OpenAI)
-- Returns `Result` with corrected text or error details
+- Returns `Result` with corrected text, detected language, classified error fragments, or error details
 
 **SuggestionUI.swift** - Correction display window
-- Shows original text, diff view, and error states
+- Shows original text, word-level diff view, detected error category badges (with fragment tooltips), and error states
 - Triggers LLM request on `originalText` change
 - Automatically copies suggestion to clipboard
 - Closes when window loses focus
 
 **DiffChecker.swift** - Text diff visualization
-- Uses SwiftDiff library to compare original and corrected text
+- Tokenizes text into words and uses SwiftDiff library to compute word-level diffs between original and corrected text
 - Returns `AttributedString` with color-coded changes (green=insert, red=delete)
 
 **SettingsManager.swift** - User preferences persistence

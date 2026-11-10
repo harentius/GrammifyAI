@@ -20,16 +20,28 @@ struct StatisticsUI: View {
     @State private var monthsCount: Int = 3
 
     // Chart data
+    @State private var currentRecords: [CorrectionRecord] = []
     @State private var trendData: [ChartDataPoint] = []
     @State private var comparisonData: [ErrorComparisonData] = []
     @State private var totalEntries: Int = 0
     @State private var matchingEntries: Int = 0
+    @State private var errorFreeEntries: Int = 0
+    @State private var showClearHistoryConfirmation: Bool = false
 
     private var availableErrorCategories: [ErrorCategory] {
         if selectedLanguage == "all" {
             return ErrorCategory.allCases
         } else {
             return ErrorCategory.categoriesForLanguage(selectedLanguage)
+        }
+    }
+
+    private var chartCalendarUnit: Calendar.Component {
+        switch selectedTimePeriod {
+        case .daily: return .day
+        case .weekly: return .weekOfYear
+        case .monthly: return .month
+        case .yearly: return .year
         }
     }
 
@@ -101,25 +113,43 @@ struct StatisticsUI: View {
                 .onChange(of: dailyStartDate) { _, _ in refreshData() }
                 .onChange(of: dailyEndDate) { _, _ in refreshData() }
             } else if selectedTimePeriod == .weekly {
-                HStack {
+                HStack(spacing: 8) {
                     Text("Last")
                     TextField("", value: $weeksCount, format: .number)
                         .frame(width: 50)
                         .textFieldStyle(.roundedBorder)
+                    Stepper("", value: $weeksCount, in: 1...52)
+                        .labelsHidden()
                     Text("weeks")
                 }
                 .padding(.horizontal)
-                .onChange(of: weeksCount) { _, _ in refreshData() }
+                .onChange(of: weeksCount) { _, newValue in
+                    let clamped = min(max(newValue, 1), 52)
+                    if clamped != newValue {
+                        weeksCount = clamped
+                    } else {
+                        refreshData()
+                    }
+                }
             } else if selectedTimePeriod == .monthly {
-                HStack {
+                HStack(spacing: 8) {
                     Text("Last")
                     TextField("", value: $monthsCount, format: .number)
                         .frame(width: 50)
                         .textFieldStyle(.roundedBorder)
+                    Stepper("", value: $monthsCount, in: 1...24)
+                        .labelsHidden()
                     Text("months")
                 }
                 .padding(.horizontal)
-                .onChange(of: monthsCount) { _, _ in refreshData() }
+                .onChange(of: monthsCount) { _, newValue in
+                    let clamped = min(max(newValue, 1), 24)
+                    if clamped != newValue {
+                        monthsCount = clamped
+                    } else {
+                        refreshData()
+                    }
+                }
             }
 
             Divider()
@@ -127,11 +157,21 @@ struct StatisticsUI: View {
             // Total entries info
             HStack {
                 if selectedErrorType == "ALL" {
-                    Text("Total checks in selected period: \(totalEntries)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    if totalEntries > 0 {
+                        let errorFreePct = Double(errorFreeEntries) / Double(totalEntries) * 100.0
+                        let withErrorsCount = totalEntries - errorFreeEntries
+                        let withErrorsPct = Double(withErrorsCount) / Double(totalEntries) * 100.0
+                        Text("Total checks in selected period: \(totalEntries) · Error-free: \(errorFreeEntries) (\(errorFreePct, specifier: "%.1f")%) · With errors: \(withErrorsCount) (\(withErrorsPct, specifier: "%.1f")%)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Total checks in selected period: 0")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
                 } else {
-                    Text("Total checks in selected period: \(totalEntries) (\(matchingEntries) with \(selectedErrorType))")
+                    let matchingPct = totalEntries > 0 ? (Double(matchingEntries) / Double(totalEntries) * 100.0) : 0.0
+                    Text("Total checks in selected period: \(totalEntries) (\(matchingEntries) with \(selectedErrorType) — \(matchingPct, specifier: "%.1f")%)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -158,32 +198,66 @@ struct StatisticsUI: View {
                                 if selectedErrorType == "ALL" {
                                     if dataPoint.errorRates.isEmpty {
                                         LineMark(
-                                            x: .value("Date", dataPoint.date),
-                                            y: .value("Rate (%)", 0.0)
+                                            x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                            y: .value("Rate (%)", dataPoint.totalRate)
                                         )
                                         .foregroundStyle(.green)
-                                        .symbol(.circle)
+
+                                        PointMark(
+                                            x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                            y: .value("Rate (%)", dataPoint.totalRate)
+                                        )
+                                        .foregroundStyle(.green)
                                     } else {
                                         ForEach(dataPoint.errorRates.keys.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { category in
+                                            let rate = dataPoint.errorRates[category] ?? 0
+                                            let seriesLabel = "\(category.rawValue) - \(category.description)"
                                             LineMark(
-                                                x: .value("Date", dataPoint.date),
-                                                y: .value("Rate (%)", dataPoint.errorRates[category] ?? 0)
+                                                x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                                y: .value("Rate (%)", rate)
                                             )
-                                            .foregroundStyle(by: .value("Error Type", category.rawValue))
-                                            .symbol(by: .value("Error Type", category.rawValue))
+                                            .foregroundStyle(by: .value("Error Type", seriesLabel))
+                                            .symbol(by: .value("Error Type", seriesLabel))
+
+                                            PointMark(
+                                                x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                                y: .value("Rate (%)", rate)
+                                            )
+                                            .foregroundStyle(by: .value("Error Type", seriesLabel))
                                         }
                                     }
                                 } else if let category = ErrorCategory(rawValue: selectedErrorType) {
+                                    let rate = dataPoint.errorRates[category] ?? 0
                                     LineMark(
-                                        x: .value("Date", dataPoint.date),
-                                        y: .value("Rate (%)", dataPoint.errorRates[category] ?? 0)
+                                        x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                        y: .value("Rate (%)", rate)
                                     )
                                     .foregroundStyle(.blue)
-                                    .symbol(.circle)
+
+                                    PointMark(
+                                        x: .value("Date", dataPoint.date, unit: chartCalendarUnit),
+                                        y: .value("Rate (%)", rate)
+                                    )
+                                    .foregroundStyle(.blue)
+                                }
+                            }
+                            .chartYScale(domain: 0...100)
+                            .chartXAxis {
+                                AxisMarks { _ in
+                                    AxisGridLine()
+                                    AxisTick()
+                                    switch selectedTimePeriod {
+                                    case .daily, .weekly:
+                                        AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                                    case .monthly:
+                                        AxisValueLabel(format: .dateTime.year().month(.abbreviated))
+                                    case .yearly:
+                                        AxisValueLabel(format: .dateTime.year())
+                                    }
                                 }
                             }
                             .chartYAxis {
-                                AxisMarks(position: .leading) { value in
+                                AxisMarks(position: .leading, values: [0, 20, 40, 60, 80, 100]) { value in
                                     AxisGridLine()
                                     AxisValueLabel {
                                         if let v = value.as(Double.self) {
@@ -216,14 +290,15 @@ struct StatisticsUI: View {
                                     x: .value("Category", item.category.rawValue),
                                     y: .value("Rate (%)", item.percentage)
                                 )
-                                .foregroundStyle(by: .value("Category", item.category.rawValue))
+                                .foregroundStyle(by: .value("Category", "\(item.category.rawValue) - \(item.category.description)"))
                                 .annotation(position: .top) {
                                     Text("\(item.percentage, specifier: "%.1f")%")
                                         .font(.caption2)
                                 }
                             }
+                            .chartYScale(domain: 0...110)
                             .chartYAxis {
-                                AxisMarks(position: .leading) { value in
+                                AxisMarks(position: .leading, values: [0, 20, 40, 60, 80, 100]) { value in
                                     AxisGridLine()
                                     AxisValueLabel {
                                         if let v = value.as(Double.self) {
@@ -241,14 +316,33 @@ struct StatisticsUI: View {
 
             Divider()
 
-            // Footer: Export button
+            // Footer: Export & Clear History buttons
             HStack {
                 Button("Export CSV") {
                     exportToCSV()
                 }
+                .disabled(currentRecords.isEmpty)
+
                 Spacer()
+
+                Button("Clear History…", role: .destructive) {
+                    showClearHistoryConfirmation = true
+                }
+                .disabled(availableLanguages.isEmpty && currentRecords.isEmpty)
             }
             .padding(.horizontal)
+            .alert("Clear Correction History?", isPresented: $showClearHistoryConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Clear All History", role: .destructive) {
+                    historyStore?.clearHistory()
+                    selectedLanguage = "all"
+                    appState.historyVersion += 1
+                    loadAvailableLanguages()
+                    refreshData()
+                }
+            } message: {
+                Text("This will permanently delete all recorded grammar checks and statistics. This action cannot be undone.")
+            }
         }
         .padding()
         .frame(minWidth: 800, minHeight: 700)
@@ -298,6 +392,7 @@ struct StatisticsUI: View {
             startDate: startDate,
             endDate: endDate
         )
+        currentRecords = records
 
         // Process trend data
         trendData = processor.processTrendData(
@@ -315,6 +410,7 @@ struct StatisticsUI: View {
 
         // Record counts
         totalEntries = records.count
+        errorFreeEntries = records.filter { $0.errors.isEmpty }.count
         if selectedErrorType == "ALL" {
             matchingEntries = totalEntries
         } else {
@@ -334,12 +430,12 @@ struct StatisticsUI: View {
             let end = max(dailyStartDate, dailyEndDate).endOfDay()
             return (start, end)
         case .weekly:
-            let validWeeks = max(1, weeksCount)
+            let validWeeks = min(max(1, weeksCount), 52)
             let currentWeekStart = now.startOfWeek()
             let start = calendar.date(byAdding: .weekOfYear, value: -(validWeeks - 1), to: currentWeekStart) ?? currentWeekStart
             return (start, now)
         case .monthly:
-            let validMonths = max(1, monthsCount)
+            let validMonths = min(max(1, monthsCount), 24)
             let currentMonthStart = now.startOfMonth()
             let start = calendar.date(byAdding: .month, value: -(validMonths - 1), to: currentMonthStart) ?? currentMonthStart
             return (start, now)
@@ -355,15 +451,13 @@ struct StatisticsUI: View {
         }
     }
 
-    private func exportToCSV() {
-        guard let store = historyStore else { return }
+    private func escapeCSVField(_ value: String) -> String {
+        let escaped = value.replacingOccurrences(of: "\"", with: "\"\"")
+        return "\"\(escaped)\""
+    }
 
-        let (startDate, endDate) = calculateDateRange()
-        let records = store.fetchRecords(
-            from: startDate,
-            to: endDate,
-            language: selectedLanguage == "all" ? nil : selectedLanguage
-        )
+    private func exportToCSV() {
+        let records = currentRecords
 
         // Filter by error type if needed
         let filteredRecords: [CorrectionRecord]
@@ -376,14 +470,18 @@ struct StatisticsUI: View {
         }
 
         // Build CSV
-        var csv = "Timestamp,Language,Error Category,Original Fragment,Corrected Fragment\n"
+        var csv = "Timestamp,Language,Error Category,Original Fragment,Corrected Fragment,Original Text,Corrected Text\n"
         let dateFormatter = ISO8601DateFormatter()
 
         for record in filteredRecords {
-            let timestamp = dateFormatter.string(from: record.timestamp)
+            let timestamp = escapeCSVField(dateFormatter.string(from: record.timestamp))
+            let language = escapeCSVField(record.language)
+            let originalText = escapeCSVField(record.originalText)
+            let correctedText = escapeCSVField(record.correctedText)
+
             if record.errors.isEmpty {
                 if selectedErrorType == "ALL" {
-                    csv += "\"\(timestamp)\",\"\(record.language)\",\"NONE\",\"\",\"\"\n"
+                    csv += "\(timestamp),\(language),\"NONE\",\"\",\"\",\(originalText),\(correctedText)\n"
                 }
             } else {
                 for error in record.errors {
@@ -391,10 +489,11 @@ struct StatisticsUI: View {
                         continue
                     }
 
-                    let original = (error.originalFragment ?? "").replacingOccurrences(of: "\"", with: "\"\"")
-                    let corrected = (error.correctedFragment ?? "").replacingOccurrences(of: "\"", with: "\"\"")
+                    let category = escapeCSVField(error.category.rawValue)
+                    let originalFrag = escapeCSVField(error.originalFragment ?? "")
+                    let correctedFrag = escapeCSVField(error.correctedFragment ?? "")
 
-                    csv += "\"\(timestamp)\",\"\(record.language)\",\"\(error.category.rawValue)\",\"\(original)\",\"\(corrected)\"\n"
+                    csv += "\(timestamp),\(language),\(category),\(originalFrag),\(correctedFrag),\(originalText),\(correctedText)\n"
                 }
             }
         }

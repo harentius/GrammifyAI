@@ -102,34 +102,6 @@ class HistoryStore: ObservableObject {
         }
     }
 
-    // Get statistics for a specific time period
-    func getStatistics(from startDate: Date, to endDate: Date, language: String? = nil) -> [ErrorCategory: Int] {
-        let records = fetchRecords(from: startDate, to: endDate, language: language)
-
-        var stats: [ErrorCategory: Int] = [:]
-        for record in records {
-            for error in record.errors {
-                stats[error.category, default: 0] += 1
-            }
-        }
-
-        return stats
-    }
-
-    // Get weekly statistics
-    func getWeeklyStatistics(language: String? = nil) -> [ErrorCategory: Int] {
-        let now = Date()
-        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
-        return getStatistics(from: weekAgo, to: now, language: language)
-    }
-
-    // Get monthly statistics
-    func getMonthlyStatistics(language: String? = nil) -> [ErrorCategory: Int] {
-        let now = Date()
-        let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: now) ?? now
-        return getStatistics(from: monthAgo, to: now, language: language)
-    }
-
     // Get total record count
     func getRecordCount(language: String? = nil) -> Int {
         let predicate: Predicate<CorrectionRecord>?
@@ -154,43 +126,6 @@ class HistoryStore: ObservableObject {
         }
     }
 
-    // Export all history as array (for CSV export)
-    func exportHistory() -> [CorrectionRecord] {
-        let descriptor = FetchDescriptor<CorrectionRecord>(
-            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-        )
-
-        do {
-            return try modelContext.fetch(descriptor)
-        } catch {
-            NSLog("Failed to export history: \(error.localizedDescription)")
-            return []
-        }
-    }
-
-    // Delete records older than a specific date
-    func deleteRecordsOlderThan(date: Date) {
-        let predicate = #Predicate<CorrectionRecord> { record in
-            record.timestamp < date
-        }
-
-        let descriptor = FetchDescriptor<CorrectionRecord>(predicate: predicate)
-
-        do {
-            let oldRecords = try modelContext.fetch(descriptor)
-            for record in oldRecords {
-                for error in record.errors {
-                    modelContext.delete(error)
-                }
-                modelContext.delete(record)
-            }
-            try modelContext.save()
-            NSLog("Deleted \(oldRecords.count) old records")
-        } catch {
-            NSLog("Failed to delete old records: \(error.localizedDescription)")
-        }
-    }
-
     // Clear all history
     func clearHistory() {
         do {
@@ -204,9 +139,10 @@ class HistoryStore: ObservableObject {
 
     // Get all unique languages in the database
     func getUniqueLanguages() -> [String] {
-        let descriptor = FetchDescriptor<CorrectionRecord>(
+        var descriptor = FetchDescriptor<CorrectionRecord>(
             sortBy: [SortDescriptor(\.language)]
         )
+        descriptor.propertiesToFetch = [\.language]
 
         do {
             let records = try modelContext.fetch(descriptor)
@@ -224,11 +160,13 @@ class HistoryStore: ObservableObject {
             sortBy: [SortDescriptor(\.timestamp, order: .forward)]
         )
         oldestDescriptor.fetchLimit = 1
+        oldestDescriptor.propertiesToFetch = [\.timestamp]
 
         var newestDescriptor = FetchDescriptor<CorrectionRecord>(
             sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
         )
         newestDescriptor.fetchLimit = 1
+        newestDescriptor.propertiesToFetch = [\.timestamp]
 
         do {
             let oldest = try modelContext.fetch(oldestDescriptor).first?.timestamp

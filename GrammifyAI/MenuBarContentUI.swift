@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarContentUI: View {
     @StateObject var appState: AppState
     @ObservedObject var checkForUpdatesViewModel: CheckForUpdatesViewModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -20,6 +21,8 @@ struct MenuBarContentUI: View {
             if !appState.showSettingsUI {
                 Button("Statistics") {
                     appState.showStatisticsUI = true
+                    NSApplication.shared.activate(ignoringOtherApps: true)
+                    openWindow(id: "statistics")
                 }
 
                 Button("Check for Updates...") {
