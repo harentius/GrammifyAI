@@ -9,11 +9,6 @@ class StatisticsDataProcessor {
         self.historyStore = historyStore
     }
 
-    // Get available languages from stored records
-    func getAvailableLanguages() -> [String] {
-        historyStore.getUniqueLanguages()
-    }
-
     // Fetch records once for a date range with language filter
     func fetchRecords(
         language: String?,
@@ -116,18 +111,6 @@ class StatisticsDataProcessor {
         }.sorted { $0.date < $1.date }
     }
 
-    // Convenience overload for backwards compatibility
-    func processTrendData(
-        period: TimePeriod,
-        language: String?,
-        errorType: String?,
-        startDate: Date,
-        endDate: Date
-    ) -> [ChartDataPoint] {
-        let records = fetchRecords(language: language, startDate: startDate, endDate: endDate)
-        return processTrendData(records: records, period: period, language: language, errorType: errorType)
-    }
-
     // Process records into comparison data (percentage of records with each error category)
     func processComparisonData(
         records: [CorrectionRecord],
@@ -158,26 +141,5 @@ class StatisticsDataProcessor {
                 count: count
             )
         }.sorted { $0.percentage > $1.percentage }
-    }
-
-    // Convenience overload for backwards compatibility
-    func processComparisonData(
-        language: String?,
-        errorType: String?,
-        startDate: Date,
-        endDate: Date
-    ) -> [ErrorComparisonData] {
-        let records = fetchRecords(language: language, startDate: startDate, endDate: endDate)
-        return processComparisonData(records: records, errorType: errorType)
-    }
-
-    // Get total record count for a date range
-    func totalRecordCount(
-        language: String?,
-        startDate: Date,
-        endDate: Date
-    ) -> Int {
-        let records = fetchRecords(language: language, startDate: startDate, endDate: endDate)
-        return records.count
     }
 }
