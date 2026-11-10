@@ -8,8 +8,8 @@ This triggers a popup with improvement suggestions and automatically copies the 
 Thanks to the macOS Accessibility API, GrammifyAI works with text in any **web** or **native** application.
 By leveraging **LLM integration** (e.g., OpenAI or any OpenAI-compatible provider), it not only fixes grammar and typos but also improves your phrasing and helps you track recurring mistakes over time.
 
-<img width="500" alt="App Screenshot" src="https://github.com/user-attachments/assets/ab561557-0f9c-4b6d-b148-67b4e1eaf5d3" />
-<img width="295" alt="Diff View" src="https://github.com/user-attachments/assets/2de9b281-70bc-46dd-8842-15307108c544" />
+<img width="500" alt="Suggestion Diff View" src="docs/images/suggestion.png" />
+<img width="295" alt="Settings Popover" src="docs/images/settings.png" />
 
 GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the GrammifyAI side; usage depends entirely on your LLM API billing.
 
@@ -21,6 +21,8 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 * **Writing Statistics & Error Classification:** Automatically detects the language of your text, categorizes mistakes (Syntax, Vocabulary, Prepositions, Idiomatics, Register, Orthography, plus language-specific categories for **German** and **English**), and charts your error trends over time with CSV export.
 * **OpenAI-Compatible API Support:** Defaults to OpenAI (`https://api.openai.com` with `gpt-4o-mini`), or point it to any OpenAI-compatible endpoint (e.g., OpenRouter, Groq, Ollama, LM Studio).
 * **Menu Bar Convenience:** Supports **Launch at Login** and built-in updates via **Check for Updates...**.
+
+<img width="650" alt="Writing Statistics" src="docs/images/statistics.png" />
 
 ## Installation
 
