@@ -31,27 +31,32 @@ struct LlmClient {
 
     // Helper method to parse LLM response as JSON
     private func parseCorrectionResponse(_ content: String) -> CorrectionResponse? {
-        var jsonString = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        let decoder = JSONDecoder()
 
-        // Extract the outermost JSON object { ... } to handle markdown code fences
-        // and conversational text without breaking on inner backticks
-        if let firstBrace = jsonString.firstIndex(of: "{"),
-           let lastBrace = jsonString.lastIndex(of: "}"),
+        if let data = trimmed.data(using: .utf8),
+           let response = try? decoder.decode(CorrectionResponse.self, from: data) {
+            return response
+        }
+
+        // Fallback: extract the outermost JSON object { ... } for models that wrap
+        // output in markdown code fences despite response_format
+        if let firstBrace = trimmed.firstIndex(of: "{"),
+           let lastBrace = trimmed.lastIndex(of: "}"),
            firstBrace < lastBrace {
-            jsonString = String(jsonString[firstBrace...lastBrace])
+            let extracted = String(trimmed[firstBrace...lastBrace])
+            if let data = extracted.data(using: .utf8) {
+                do {
+                    return try decoder.decode(CorrectionResponse.self, from: data)
+                } catch {
+                    NSLog("Failed to parse correction response: \(error.localizedDescription)")
+                    return nil
+                }
+            }
         }
 
-        guard let data = jsonString.data(using: .utf8) else {
-            return nil
-        }
-
-        do {
-            let decoder = JSONDecoder()
-            return try decoder.decode(CorrectionResponse.self, from: data)
-        } catch {
-            NSLog("Failed to parse correction response: \(error.localizedDescription)")
-            return nil
-        }
+        NSLog("Failed to parse correction response: not valid JSON")
+        return nil
     }
 
     public func correctWritting(text: String) async -> Result {
@@ -67,7 +72,7 @@ struct LlmClient {
         let url = URL(string: aiUrl)
         let aiHost = url?.host ?? ""
         let aiScheme = url?.scheme ?? "https"
-        let aiPort = url?.port ?? 443
+        let aiPort = url?.port
         let aiBasePath = url?.path ?? "/"
 
         // Get language-specific error categories without repeating universal ones
@@ -109,10 +114,7 @@ struct LlmClient {
         3. Classify errors using appropriate categories for that language
         4. Use only the category codes (e.g., "SYN", "VOC", "PREP")
         5. If there are no errors, return an empty array for errors
-
-        Text to analyze:
         """
-        let userMessage = prompt + "\n" + text
 
         // Build URL
         var components = URLComponents()
@@ -123,7 +125,10 @@ struct LlmClient {
         let trimmedBase = normalizedBase.hasSuffix("/") ? String(normalizedBase.dropLast()) : normalizedBase
         components.path = trimmedBase + "/chat/completions"
         guard let endpointURL = components.url else {
-            return Result.error(error: "Invalid AI URL", errorDetails: "scheme=\(aiScheme) host=\(aiHost) port=\(aiPort) basePath=\(aiBasePath)")
+            return Result.error(
+                error: "Invalid AI URL",
+                errorDetails: "scheme=\(aiScheme) host=\(aiHost) port=\(aiPort.map(String.init) ?? "default") basePath=\(aiBasePath)"
+            )
         }
 
         // Build request
@@ -134,8 +139,11 @@ struct LlmClient {
 
         let body: [String: Any] = [
             "model": aiModel,
+            "temperature": 0.1,
+            "response_format": ["type": "json_object"],
             "messages": [
-                ["role": "user", "content": userMessage]
+                ["role": "system", "content": prompt],
+                ["role": "user", "content": text]
             ]
         ]
 
