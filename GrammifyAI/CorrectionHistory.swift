@@ -204,9 +204,10 @@ class HistoryStore: ObservableObject {
 
     // Get all unique languages in the database
     func getUniqueLanguages() -> [String] {
-        let descriptor = FetchDescriptor<CorrectionRecord>(
+        var descriptor = FetchDescriptor<CorrectionRecord>(
             sortBy: [SortDescriptor(\.language)]
         )
+        descriptor.propertiesToFetch = [\.language]
 
         do {
             let records = try modelContext.fetch(descriptor)
