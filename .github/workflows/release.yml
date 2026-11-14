@@ -62,6 +62,30 @@ jobs:
             CURRENT_PROJECT_VERSION=${{ steps.build_number.outputs.BUILD_NUMBER }} \
             build
 
+      - name: Code sign application
+        if: env.BUILD_CERTIFICATE_BASE64 != ''
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASS="$(uuidgen)"
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+
+          KEYCHAIN_PATH="$KEYCHAIN_PATH" ./bin/sign-app DerivedData/Build/Products/Release/GrammifyAI.app
+
+          security delete-keychain "$KEYCHAIN_PATH"
+          rm -f "$CERT_PATH"
+
       - name: Package application
         run: |
           cd DerivedData/Build/Products/Release

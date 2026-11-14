@@ -1,6 +1,8 @@
 import Foundation
 import Security
 import ServiceManagement
+import CryptoKit
+import IOKit
 
 struct SettingsManager {
     private static let KEYCHAIN_SERVICE = Bundle.main.bundleIdentifier ?? "harentius.GrammifyAI"
@@ -9,6 +11,7 @@ struct SettingsManager {
     private static let SETTING_AI_MODEL = "AI_MODEL"
     private static let SETTING_LAUNCH_AT_LOGIN = "LAUNCH_AT_LOGIN"
     private static let SETTING_OPEN_NEAR_SELECTION = "OPEN_NEAR_SELECTION"
+    private static let CREDENTIALS_FILENAME = "credentials.enc"
 
     private static var cachedApiToken: String?
 
@@ -23,9 +26,9 @@ struct SettingsManager {
         guard !isRunningInPreview else { return }
 
         if token.isEmpty {
-            deleteTokenFromKeychain()
+            deleteEncryptedTokenFile()
         } else {
-            _ = saveTokenToKeychain(token: token)
+            _ = saveEncryptedToken(token: token)
         }
     }
 
@@ -38,10 +41,10 @@ struct SettingsManager {
             return ""
         }
 
-        // Migrate legacy plaintext token from UserDefaults if present
+        // 1. Migrate legacy plaintext token from UserDefaults if present
         if let legacyToken = UserDefaults.standard.string(forKey: SettingsManager.SETTING_AI_API_TOKEN) {
             if !legacyToken.isEmpty {
-                if saveTokenToKeychain(token: legacyToken) {
+                if saveEncryptedToken(token: legacyToken) {
                     UserDefaults.standard.removeObject(forKey: SettingsManager.SETTING_AI_API_TOKEN)
                 }
                 cachedApiToken = legacyToken
@@ -51,7 +54,17 @@ struct SettingsManager {
             }
         }
 
+        // 2. Read from app-specific AES-GCM encrypted credentials file
+        if let storedToken = readEncryptedToken() {
+            cachedApiToken = storedToken
+            return storedToken
+        }
+
+        // 3. One-time migration from legacy cdhash-locked Keychain item
         if let keychainToken = readTokenFromKeychain() {
+            if !keychainToken.isEmpty {
+                _ = saveEncryptedToken(token: keychainToken)
+            }
             cachedApiToken = keychainToken
             return keychainToken
         }
@@ -59,40 +72,83 @@ struct SettingsManager {
         return ""
     }
 
+    private static func credentialsFileURL() -> URL? {
+        let fileManager = FileManager.default
+        guard let appSupportDir = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        let appDirectory = appSupportDir.appendingPathComponent(KEYCHAIN_SERVICE, isDirectory: true)
+        do {
+            try fileManager.createDirectory(at: appDirectory, withIntermediateDirectories: true)
+        } catch {
+            NSLog("Failed to create application support directory: \(error.localizedDescription)")
+            return nil
+        }
+        return appDirectory.appendingPathComponent(CREDENTIALS_FILENAME)
+    }
+
+    private static func machineEncryptionKey() -> SymmetricKey {
+        var machineSecret = KEYCHAIN_SERVICE
+        let service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
+        if service != 0 {
+            defer { IOObjectRelease(service) }
+            if let uuid = IORegistryEntryCreateCFProperty(service, kIOPlatformUUIDKey as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String,
+               !uuid.isEmpty {
+                machineSecret = uuid
+            }
+        }
+        let ikm = SymmetricKey(data: Data(machineSecret.utf8))
+        return HKDF<SHA256>.deriveKey(
+            inputKeyMaterial: ikm,
+            salt: Data(KEYCHAIN_SERVICE.utf8),
+            info: Data("GrammifyAI.APIToken.v1".utf8),
+            outputByteCount: 32
+        )
+    }
+
     @discardableResult
-    private static func saveTokenToKeychain(token: String) -> Bool {
-        guard let data = token.data(using: .utf8) else { return false }
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KEYCHAIN_SERVICE,
-            kSecAttrAccount as String: SETTING_AI_API_TOKEN
-        ]
-
-        let attributesToUpdate: [String: Any] = [
-            kSecValueData as String: data
-        ]
-
-        let updateStatus = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
-        if updateStatus == errSecSuccess {
-            return true
-        }
-
-        if updateStatus != errSecItemNotFound {
-            // If an existing item could not be updated (e.g. stale ACL), remove and re-create it
-            SecItemDelete(query as CFDictionary)
-        }
-
-        var addQuery = query
-        addQuery[kSecValueData as String] = data
-        addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-
-        let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
-        if addStatus != errSecSuccess {
-            NSLog("Keychain save failed with status: \(addStatus)")
+    private static func saveEncryptedToken(token: String) -> Bool {
+        guard let fileURL = credentialsFileURL(),
+              let plaintext = token.data(using: .utf8) else {
             return false
         }
-        return true
+
+        do {
+            let key = machineEncryptionKey()
+            let sealedBox = try AES.GCM.seal(plaintext, using: key)
+            guard let combined = sealedBox.combined else { return false }
+            try combined.write(to: fileURL, options: .atomic)
+            try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: fileURL.path)
+            return true
+        } catch {
+            NSLog("Encrypted token save failed: \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    private static func readEncryptedToken() -> String? {
+        guard let fileURL = credentialsFileURL(),
+              FileManager.default.fileExists(atPath: fileURL.path) else {
+            return nil
+        }
+
+        do {
+            let combined = try Data(contentsOf: fileURL)
+            let sealedBox = try AES.GCM.SealedBox(combined: combined)
+            let plaintext = try AES.GCM.open(sealedBox, using: machineEncryptionKey())
+            return String(data: plaintext, encoding: .utf8)
+        } catch {
+            NSLog("Encrypted token read failed: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    private static func deleteEncryptedTokenFile() {
+        guard let fileURL = credentialsFileURL(),
+              FileManager.default.fileExists(atPath: fileURL.path) else {
+            return
+        }
+        try? FileManager.default.removeItem(at: fileURL)
     }
 
     private static func readTokenFromKeychain() -> String? {
@@ -119,18 +175,6 @@ struct SettingsManager {
 
         NSLog("Keychain read failed with status: \(status)")
         return nil
-    }
-
-    private static func deleteTokenFromKeychain() {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KEYCHAIN_SERVICE,
-            kSecAttrAccount as String: SETTING_AI_API_TOKEN
-        ]
-        let status = SecItemDelete(query as CFDictionary)
-        if status != errSecSuccess && status != errSecItemNotFound {
-            NSLog("Keychain delete failed with status: \(status)")
-        }
     }
 
     static public func getAIUrl() -> String {

@@ -79,6 +79,6 @@ I built this tool to get quick, one-shortcut corrections without needing to enga
 
 ### 2. Privacy & Security
 Your API key is used **solely** to connect with the specified host (default: OpenAI) to provide functionality. It is not shared with anyone else.
-* **API Key Storage:** Stored securely on your device using the macOS Keychain.
+* **API Key Storage:** Stored locally on your device encrypted with AES-GCM (`CryptoKit`) in `~/Library/Application Support/harentius.GrammifyAI/credentials.enc`.
 * **Correction History & Statistics:** Stored strictly locally on your Mac (`~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store`) and can be cleared at any time from **Settings > Clear History** or **Statistics > Clear History…**.
 * Feel free to review the code and build the app yourself if you have any security concerns! ;)

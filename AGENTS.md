@@ -68,7 +68,7 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 - Returns `AttributedString` with color-coded changes (green=insert, red=delete)
 
 **SettingsManager.swift** - User preferences persistence
-- Stores API token in macOS Keychain (with automatic migration from legacy `UserDefaults`), and URL, model, and launch-at-login via `UserDefaults`
+- Stores API token encrypted with AES-GCM (`CryptoKit`) in `~/Library/Application Support/harentius.GrammifyAI/credentials.enc` (with automatic migration from legacy `UserDefaults` and Keychain), and URL, model, and launch-at-login via `UserDefaults`
 - Defaults: `https://api.openai.com` and `gpt-4o-mini`
 - Handles `SMAppService` registration for launch-at-login (macOS 13+)
 
@@ -90,7 +90,9 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 
 **Accessibility API:** The app requires `AXIsProcessTrusted()` to return true. When permission is not granted on launch, `AppState.requestAccessibilityPermission()` resets any stale TCC entry via `tccutil reset Accessibility` and calls `AXIsProcessTrustedWithOptions` with `kAXTrustedCheckOptionPrompt: true` to show the native macOS prompt, polling until permission is granted. When operations fail, descriptive error codes are returned (see `AXError.swift` for error code mapping).
 
-**API Token Storage:** The OpenAI API token is stored securely in the macOS Keychain (`kSecClassGenericPassword`) and cached in memory for the session, with automatic migration from legacy `UserDefaults` storage.
+**API Token Storage:** The OpenAI API token is encrypted using `CryptoKit` (`AES.GCM`, keyed via `HKDF<SHA256>` from the hardware `IOPlatformUUID` and bundle ID) and stored in `~/Library/Application Support/harentius.GrammifyAI/credentials.enc` (`0600` permissions), cached in memory for the session, with automatic one-time migration from legacy `UserDefaults` and Keychain storage.
+
+**Code Signing:** Local (`./bin/dev-rebuild`) and CI (`.github/workflows/release.yml`) builds sign `GrammifyAI.app` via `./bin/sign-app` using a persistent self-signed certificate (`GrammifyAI Code Signer`, generated via `./bin/setup-signing-cert` into `~/.config/grammifyai/signing/`) so the Designated Requirement (`identifier "harentius.GrammifyAI" and certificate leaf = H"..."`) remains constant across rebuilds and updates, preserving macOS Accessibility (TCC) permissions.
 
 **Statistics Storage:** Correction history and statistics are stored via SwiftData in an app-specific file at `~/Library/Application Support/harentius.GrammifyAI/GrammifyAI.store` (with one-time migration from the legacy `~/Library/Application Support/default.store` location).
 

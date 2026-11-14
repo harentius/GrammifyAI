@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_PATH="${1:-./DerivedData/Build/Products/Release/GrammifyAI.app}"
+CERT_NAME="${CODESIGN_IDENTITY:-GrammifyAI Code Signer}"
+ENTITLEMENTS_PATH="${ENTITLEMENTS_PATH:-GrammifyAI/GrammifyAI.entitlements}"
+DEFAULT_CERT_DIR="${HOME}/.config/grammifyai/signing"
+DEFAULT_KEYCHAIN="$DEFAULT_CERT_DIR/signing.keychain-db"
+DEFAULT_PASS_FILE="$DEFAULT_CERT_DIR/p12-password.txt"
+
+TARGET_KEYCHAIN=""
+CODESIGN_KEYCHAIN_ARGS=()
+
+if [[ -n "${KEYCHAIN_PATH:-}" ]]; then
+    TARGET_KEYCHAIN="$KEYCHAIN_PATH"
+    CODESIGN_KEYCHAIN_ARGS=(--keychain "$KEYCHAIN_PATH")
+elif [[ -f "$DEFAULT_KEYCHAIN" ]]; then
+    if [[ -f "$DEFAULT_PASS_FILE" ]]; then
+        security unlock-keychain -p "$(cat "$DEFAULT_PASS_FILE")" "$DEFAULT_KEYCHAIN" 2>/dev/null || true
+    fi
+    TARGET_KEYCHAIN="$DEFAULT_KEYCHAIN"
+    CODESIGN_KEYCHAIN_ARGS=(--keychain "$DEFAULT_KEYCHAIN")
+fi
+
+if [[ ! -d "$APP_PATH" ]]; then
+    echo "Error: App bundle not found at $APP_PATH" >&2
+    exit 1
+fi
+
+# Check whether the signing identity is available in the target keychain(s)
+if [[ -n "$TARGET_KEYCHAIN" ]]; then
+    FOUND_IDENTITY="$(security find-identity -p codesigning "$TARGET_KEYCHAIN" 2>/dev/null || true)"
+else
+    FOUND_IDENTITY="$(security find-identity -p codesigning 2>/dev/null || true)"
+fi
+
+if ! grep -Fq "\"$CERT_NAME\"" <<<"$FOUND_IDENTITY"; then
+    echo "Notice: Signing identity '$CERT_NAME' not found in keychain; keeping ad-hoc signature." >&2
+    echo "Run ./bin/setup-signing-cert to generate and install a persistent signing certificate." >&2
+    exit 0
+fi
+
+echo "Signing $APP_PATH with '$CERT_NAME'..."
+rm -f "$APP_PATH/Contents/MacOS/"*.cstemp 2>/dev/null || true
+# Do not pass --deep so embedded Sparkle.framework helpers retain their ad-hoc signatures
+# (Sparkle requires an Apple Developer Team ID if its internal helpers are non-adhoc signed).
+codesign --force \
+    ${CODESIGN_KEYCHAIN_ARGS[@]+"${CODESIGN_KEYCHAIN_ARGS[@]}"} \
+    --entitlements "$ENTITLEMENTS_PATH" \
+    --sign "$CERT_NAME" \
+    "$APP_PATH"
+
+codesign --verify --deep --strict -vvv "$APP_PATH"
+echo "Successfully signed and verified $APP_PATH"

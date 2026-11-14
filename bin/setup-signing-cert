@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CERT_NAME="GrammifyAI Code Signer"
+CERT_DIR="${HOME}/.config/grammifyai/signing"
+SIGNING_KEYCHAIN="$CERT_DIR/signing.keychain-db"
+P12_FILE="$CERT_DIR/grammifyai-signing.p12"
+PASS_FILE="$CERT_DIR/p12-password.txt"
+
+mkdir -p "$CERT_DIR"
+chmod 700 "$CERT_DIR"
+
+# Remove any leftover untrusted entry from login.keychain-db if present
+security delete-certificate -c "$CERT_NAME" "${HOME}/Library/Keychains/login.keychain-db" 2>/dev/null || true
+
+if [[ "${1:-}" == "--import" ]]; then
+    if [[ $# -lt 3 ]]; then
+        echo "Usage: $0 --import <path-to-p12> <p12-password>" >&2
+        exit 1
+    fi
+    cp "$2" "$P12_FILE"
+    chmod 600 "$P12_FILE"
+    echo -n "$3" > "$PASS_FILE"
+    chmod 600 "$PASS_FILE"
+fi
+
+if [[ ! -f "$P12_FILE" || ! -f "$PASS_FILE" ]]; then
+    echo "Generating persistent self-signed code signing certificate '$CERT_NAME'..."
+    TMP_DIR="$(mktemp -d)"
+    trap 'rm -rf "$TMP_DIR"' EXIT
+
+    P12_PASSWORD="$(uuidgen | tr -d '-')"
+    echo -n "$P12_PASSWORD" > "$PASS_FILE"
+    chmod 600 "$PASS_FILE"
+
+    cat > "$TMP_DIR/openssl.cnf" <<EOF
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_code_sign
+prompt = no
+
+[req_distinguished_name]
+CN = $CERT_NAME
+
+[v3_code_sign]
+keyUsage = critical, digitalSignature
+extendedKeyUsage = critical, codeSigning
+basicConstraints = critical, CA:false
+EOF
+
+    openssl req -x509 -newkey rsa:2048 -nodes \
+        -keyout "$TMP_DIR/key.pem" \
+        -out "$TMP_DIR/cert.pem" \
+        -days 3650 \
+        -config "$TMP_DIR/openssl.cnf" 2>/dev/null
+
+    openssl pkcs12 -export \
+        -out "$P12_FILE" \
+        -inkey "$TMP_DIR/key.pem" \
+        -in "$TMP_DIR/cert.pem" \
+        -passout "pass:$P12_PASSWORD" \
+        -legacy 2>/dev/null
+
+    chmod 600 "$P12_FILE"
+fi
+
+P12_PASSWORD="$(cat "$PASS_FILE")"
+
+# Create/recreate dedicated signing keychain with partition list configured for codesign
+rm -f "$SIGNING_KEYCHAIN"
+security create-keychain -p "$P12_PASSWORD" "$SIGNING_KEYCHAIN"
+security set-keychain-settings -lut 21600 "$SIGNING_KEYCHAIN"
+security unlock-keychain -p "$P12_PASSWORD" "$SIGNING_KEYCHAIN"
+security import "$P12_FILE" -k "$SIGNING_KEYCHAIN" -P "$P12_PASSWORD" -T /usr/bin/codesign >/dev/null
+security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" "$SIGNING_KEYCHAIN" >/dev/null
+
+echo "Installed '$CERT_NAME' into dedicated signing keychain: $SIGNING_KEYCHAIN"
+echo ""
+echo "=================================================================="
+echo "Certificate bundle saved to: $P12_FILE"
+echo "Password saved to:           $PASS_FILE"
+echo ""
+echo "To configure GitHub Actions CI with the same certificate, add these"
+echo "two repository secrets at:"
+echo "  https://github.com/harentius/GrammifyAI/settings/secrets/actions"
+echo ""
+echo "1. Copy BUILD_CERTIFICATE_BASE64 to clipboard:"
+echo "   base64 -i \"$P12_FILE\" | tr -d '\\n' | pbcopy"
+echo ""
+echo "2. Copy P12_PASSWORD to clipboard:"
+echo "   pbcopy < \"$PASS_FILE\""
+echo "=================================================================="
