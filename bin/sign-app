@@ -27,6 +27,18 @@ if [[ ! -d "$APP_PATH" ]]; then
     exit 1
 fi
 
+# Ensure TARGET_KEYCHAIN is in the user's keychain search list so codesign on macOS 14/15 can resolve identities in it
+if [[ -n "$TARGET_KEYCHAIN" ]]; then
+    EXISTING_KEYCHAINS=()
+    while IFS= read -r line; do
+        kc="$(echo "$line" | sed -e 's/^[[:space:]]*"//' -e 's/"[[:space:]]*$//')"
+        if [[ -n "$kc" && "$kc" != "$TARGET_KEYCHAIN" ]]; then
+            EXISTING_KEYCHAINS+=("$kc")
+        fi
+    done < <(security list-keychains -d user)
+    security list-keychains -d user -s "$TARGET_KEYCHAIN" ${EXISTING_KEYCHAINS[@]+"${EXISTING_KEYCHAINS[@]}"}
+fi
+
 # Check whether the signing identity is available in the target keychain(s)
 if [[ -n "$TARGET_KEYCHAIN" ]]; then
     FOUND_IDENTITY="$(security find-identity -p codesigning "$TARGET_KEYCHAIN" 2>/dev/null || true)"
@@ -40,14 +52,17 @@ if ! grep -Fq "\"$CERT_NAME\"" <<<"$FOUND_IDENTITY"; then
     exit 0
 fi
 
-echo "Signing $APP_PATH with '$CERT_NAME'..."
+IDENTITY_HASH="$(grep -F "\"$CERT_NAME\"" <<<"$FOUND_IDENTITY" | head -n1 | awk '{print $2}')"
+SIGN_TARGET="${IDENTITY_HASH:-$CERT_NAME}"
+
+echo "Signing $APP_PATH with '$CERT_NAME' ($SIGN_TARGET)..."
 rm -f "$APP_PATH/Contents/MacOS/"*.cstemp 2>/dev/null || true
 # Do not pass --deep so embedded Sparkle.framework helpers retain their ad-hoc signatures
 # (Sparkle requires an Apple Developer Team ID if its internal helpers are non-adhoc signed).
 codesign --force \
     ${CODESIGN_KEYCHAIN_ARGS[@]+"${CODESIGN_KEYCHAIN_ARGS[@]}"} \
     --entitlements "$ENTITLEMENTS_PATH" \
-    --sign "$CERT_NAME" \
+    --sign "$SIGN_TARGET" \
     "$APP_PATH"
 
 codesign --verify --deep --strict -vvv "$APP_PATH"
