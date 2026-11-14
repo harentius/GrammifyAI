@@ -22,6 +22,8 @@ final class AppState: ObservableObject {
     @Published var historyVersion: Int = 0
     @Published var selectionAnchorRect: CGRect? = nil
     @Published var windowPositionToken: UUID = UUID()
+    var selectionTarget: SelectionTarget? = nil
+    var lastWindowOpenTime: Date = .distantPast
 
     @Published var isOpenAIRequestPending = false
     @Published var isOpenAIError = false
@@ -50,13 +52,15 @@ final class AppState: ObservableObject {
             accessibilityAPIError = ""
 
             let selectionManager = SelectionManager()
-            let selectedTextResult = selectionManager.getSelectedText()
+            let (selectedTextResult, target) = selectionManager.getSelectedTextWithTarget()
+            selectionTarget = target
 
             if SettingsManager.getOpenNearSelection() {
                 selectionAnchorRect = selectionManager.getSelectionAnchorRect()
             } else {
                 selectionAnchorRect = nil
             }
+            lastWindowOpenTime = Date()
             windowPositionToken = UUID()
 
             if selectedTextResult.isSuccessful() {
@@ -162,5 +166,41 @@ final class AppState: ObservableObject {
         errorDetails = ""
         detectedErrors = []
         detectedLanguage = ""
+    }
+
+    public func applySuggestion() {
+        let replacement = suggestion
+        guard !replacement.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+
+        let target = selectionTarget
+        selectionTarget = nil
+        showSuggestionUI = false
+
+        if replacement == originalText {
+            if let sourceApp = target?.application {
+                NSApplication.shared.yieldActivation(to: sourceApp)
+                sourceApp.activate(options: [.activateIgnoringOtherApps])
+            }
+            return
+        }
+
+        SelectionManager().replaceSelectedText(with: replacement, in: target)
+    }
+
+    public func dismissSuggestion(reactivateSourceApp: Bool = false) {
+        let target = selectionTarget
+        selectionTarget = nil
+        showSuggestionUI = false
+
+        if reactivateSourceApp, let sourceApp = target?.application {
+            NSApplication.shared.yieldActivation(to: sourceApp)
+            sourceApp.activate(options: [.activateIgnoringOtherApps])
+        }
+    }
+
+    public func clearSelectionTarget() {
+        selectionTarget = nil
     }
 }

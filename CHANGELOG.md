@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.0
+
+* Add Apply (↩) action to replace selected text directly in the source application (via Accessibility API with automatic ⌘ + V fallback)
+* Add Dismiss (⎋) action and Escape key support to close the suggestion popup and return focus to the source application
+* Sign releases with a persistent code-signing certificate and store the API key encrypted with AES-GCM in Application Support to prevent repeated macOS Keychain and Accessibility password prompts across updates and rebuilds
+
 ## 0.13.1
 
 * Word-level diff rendering in the suggestion window for cleaner, more readable corrections
