@@ -17,6 +17,7 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 
 * **System-Wide Shortcut:** Trigger corrections anywhere with `⌘ + U` (or set your own shortcut in Settings).
 * **Visual Diff & Auto-Copy:** See exact word-level additions and deletions color-coded in a diff view alongside detected error category badges (hover to inspect specific fragments), with the corrected text automatically copied to your clipboard.
+* **Direct Replace in Source App:** Press `↩` (Enter) in the suggestion popup to immediately replace the selected text in the source application, or `⎋` (Escape) to dismiss.
 * **Floating Popup Near Selection:** Optionally open a compact, auto-sized suggestion popup right next to your selected text instead of a centered window.
 * **Writing Statistics & Error Classification:** Automatically detects the language of your text, categorizes mistakes (Syntax, Vocabulary, Prepositions, Idiomatics, Register, Orthography, plus language-specific categories for **German** and **English**), and charts your error trends over time with CSV export.
 * **OpenAI-Compatible API Support:** Defaults to OpenAI (`https://api.openai.com` with `gpt-4o-mini`), or point it to any OpenAI-compatible endpoint (e.g., OpenRouter, Groq, Ollama, LM Studio).
@@ -47,8 +48,7 @@ GrammifyAI utilizes your own LLM API key. There are no quotas or limits from the
 1.  Select the text you want to enhance.
 2.  Press `⌘ + U` (or your custom shortcut).
 3.  Review the suggested correction in the diff view.
-    * *Tip:* Click the input field to regain focus if needed.
-4.  Press `⌘ + V` to paste the corrected text.
+4.  Press `↩` (Enter) to replace the selected text directly in the source app (or press `⎋` to dismiss — the suggestion is also automatically copied to your clipboard for manual `⌘ + V` pasting).
 5.  *(Optional)* Open **Statistics** from the menu bar to track your writing accuracy and most common error categories across languages over time, or export your history to CSV.
 
 ## Known Successful Use Cases

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.0
+
+* Add Apply (↩) action to replace selected text directly in the source application (via Accessibility API with automatic ⌘ + V fallback)
+* Add Dismiss (⎋) action and Escape key support to close the suggestion popup and return focus to the source application
+
 ## 0.13.1
 
 * Word-level diff rendering in the suggestion window for cleaner, more readable corrections

@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import AppKit
+import Carbon.HIToolbox
 
 struct SuggestionUI: View {
     @StateObject var appState: AppState
@@ -9,10 +10,32 @@ struct SuggestionUI: View {
     @Environment(\.modelContext) private var modelContext
     @State private var historyStore: HistoryStore?
     @State private var currentTask: Task<Void, Never>?
+    @State private var hasBecomeKeyForCurrentRequest = false
     var llmClient = LlmClient()
 
     private var isNearSelectionMode: Bool {
         appState.selectionAnchorRect != nil
+    }
+
+    private var canApplySuggestion: Bool {
+        !appState.isOpenAIRequestPending
+            && !appState.isOpenAIError
+            && !appState.isAccessibilityAPIError
+            && !appState.suggestion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private func handleApply() {
+        guard canApplySuggestion else { return }
+        hasBecomeKeyForCurrentRequest = false
+        appState.applySuggestion()
+        dismiss()
+    }
+
+    private func handleDismiss() {
+        currentTask?.cancel()
+        hasBecomeKeyForCurrentRequest = false
+        appState.dismissSuggestion(reactivateSourceApp: true)
+        dismiss()
     }
 
     private var resizeStateHash: Int {
@@ -100,6 +123,31 @@ struct SuggestionUI: View {
         }
     }
 
+    private var actionBar: some View {
+        HStack(spacing: 8) {
+            Text("Copied to clipboard")
+                .font(.caption)
+                .italic()
+                .foregroundStyle(.secondary)
+
+            Spacer(minLength: 12)
+
+            Button("Dismiss (⎋)") {
+                handleDismiss()
+            }
+            .keyboardShortcut(.cancelAction)
+            .controlSize(.small)
+
+            Button("Apply (↩)") {
+                handleApply()
+            }
+            .keyboardShortcut(.defaultAction)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+            .disabled(!canApplySuggestion)
+        }
+    }
+
     @ViewBuilder
     private var suggestionContent: some View {
         if (appState.isAccessibilityAPIError) {
@@ -147,9 +195,7 @@ struct SuggestionUI: View {
             errorCategoriesView
             Divider()
 
-            Text("Suggestion is copied to the clipboard")
-                .italic()
-                .foregroundColor(.gray)
+            actionBar
         }
     }
 
@@ -173,11 +219,36 @@ struct SuggestionUI: View {
             SuggestionWindowPositioner(
                 anchorRect: appState.selectionAnchorRect,
                 positionToken: appState.windowPositionToken,
-                resizeStateHash: resizeStateHash
+                resizeStateHash: resizeStateHash,
+                isShowing: appState.showSuggestionUI,
+                canApply: canApplySuggestion,
+                onApply: handleApply,
+                onDismiss: handleDismiss
             )
         )
+        .onChange(of: appState.windowPositionToken, initial: true) { _, newToken in
+            hasBecomeKeyForCurrentRequest = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if appState.windowPositionToken == newToken,
+                   appState.showSuggestionUI,
+                   (controlActiveState == .key || controlActiveState == .active) {
+                    hasBecomeKeyForCurrentRequest = true
+                }
+            }
+        }
         .onChange(of: controlActiveState) { oldState, newState in
-            if newState == .inactive {
+            if newState == .key || newState == .active {
+                if appState.showSuggestionUI {
+                    hasBecomeKeyForCurrentRequest = true
+                }
+            } else if newState == .inactive {
+                guard appState.showSuggestionUI,
+                      hasBecomeKeyForCurrentRequest,
+                      Date().timeIntervalSince(appState.lastWindowOpenTime) > 0.25 else {
+                    return
+                }
+                hasBecomeKeyForCurrentRequest = false
+                appState.clearSelectionTarget()
                 appState.showSuggestionUI = false
                 dismiss()
             }
@@ -369,12 +440,20 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
     let anchorRect: CGRect?
     let positionToken: UUID
     let resizeStateHash: Int
+    let isShowing: Bool
+    let canApply: Bool
+    let onApply: () -> Void
+    let onDismiss: () -> Void
 
     func makeNSView(context: Context) -> PositioningNSView {
         let view = PositioningNSView()
         view.anchorRect = anchorRect
         view.positionToken = positionToken
         view.resizeStateHash = resizeStateHash
+        view.isShowing = isShowing
+        view.canApply = canApply
+        view.onApply = onApply
+        view.onDismiss = onDismiss
         return view
     }
 
@@ -382,6 +461,10 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
         nsView.anchorRect = anchorRect
         nsView.positionToken = positionToken
         nsView.resizeStateHash = resizeStateHash
+        nsView.isShowing = isShowing
+        nsView.canApply = canApply
+        nsView.onApply = onApply
+        nsView.onDismiss = onDismiss
         nsView.applyPositionIfNeeded()
     }
 
@@ -389,14 +472,66 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
         var anchorRect: CGRect?
         var positionToken: UUID = UUID()
         var resizeStateHash: Int = 0
+        var isShowing: Bool = false
+        var canApply: Bool = false
+        var onApply: (() -> Void)?
+        var onDismiss: (() -> Void)?
         private var lastAppliedToken: UUID?
         private var lastAppliedResizeHash: Int?
+        private var keyEventMonitor: Any?
 
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
+            if self.window != nil {
+                installKeyMonitorIfNeeded()
+            } else {
+                removeKeyMonitor()
+            }
             lastAppliedToken = nil
             lastAppliedResizeHash = nil
             applyPositionIfNeeded()
+        }
+
+        deinit {
+            removeKeyMonitor()
+        }
+
+        private func installKeyMonitorIfNeeded() {
+            guard keyEventMonitor == nil else { return }
+            keyEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+                guard let self = self,
+                      self.isShowing,
+                      let window = self.window,
+                      window.isVisible else {
+                    return event
+                }
+
+                let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+                let hasDisallowedModifiers = !modifiers.intersection([.command, .control, .option]).isEmpty
+                guard !hasDisallowedModifiers else {
+                    return event
+                }
+
+                let keyCode = Int(event.keyCode)
+                if keyCode == kVK_Return || keyCode == kVK_ANSI_KeypadEnter {
+                    if self.canApply {
+                        self.onApply?()
+                        return nil
+                    }
+                } else if keyCode == kVK_Escape {
+                    self.onDismiss?()
+                    return nil
+                }
+
+                return event
+            }
+        }
+
+        private func removeKeyMonitor() {
+            if let monitor = keyEventMonitor {
+                NSEvent.removeMonitor(monitor)
+                keyEventMonitor = nil
+            }
         }
 
         func applyPositionIfNeeded() {
@@ -412,11 +547,20 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
             lastAppliedToken = positionToken
             lastAppliedResizeHash = resizeStateHash
             let rect = anchorRect
+            let shouldActivate = tokenChanged && isShowing
 
             Self.position(window: window, near: rect, centerIfNil: tokenChanged)
+            if shouldActivate {
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                window.makeKeyAndOrderFront(nil)
+            }
             DispatchQueue.main.async { [weak window] in
                 guard let window = window else { return }
                 Self.position(window: window, near: rect, centerIfNil: tokenChanged)
+                if shouldActivate {
+                    NSApplication.shared.activate(ignoringOtherApps: true)
+                    window.makeKeyAndOrderFront(nil)
+                }
             }
         }
 

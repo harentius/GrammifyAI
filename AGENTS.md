@@ -45,9 +45,10 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 - Manages keyboard shortcut callback via KeyboardShortcuts library
 - Coordinates UI state (settings, suggestions, errors)
 
-**SelectionManager.swift** - Text selection via Accessibility API
-- Uses `AXUIElementCreateSystemWide()` to access focused UI elements
+**SelectionManager.swift** - Text selection and replacement via Accessibility API
+- Uses `AXUIElementCreateSystemWide()` to access focused UI elements and captures `SelectionTarget` (owning `NSRunningApplication` and focused `AXUIElement`)
 - Reads `kAXSelectedTextAttribute` from focused element
+- Replaces selected text in the source app using a two-tier strategy: direct `AXUIElementSetAttributeValue` on native text controls (verified via `kAXValueAttribute`) with fallback to re-activating the source app and posting `⌘ + V`
 - Returns `Result` type with success/error state
 
 **LlmClient.swift** (`OpenAIHelper.swift`) - LLM API integration
@@ -59,6 +60,7 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 - Shows original text, word-level diff view, detected error category badges (with fragment tooltips), and error states
 - Triggers LLM request on `originalText` change
 - Automatically copies suggestion to clipboard
+- Provides **Apply (`↩`)** and **Dismiss (`⎋`)** actions (with local `NSEvent` key handling for `Return`, `Keypad Enter`, and `Escape`)
 - Closes when window loses focus
 
 **DiffChecker.swift** - Text diff visualization
