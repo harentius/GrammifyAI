@@ -31,7 +31,7 @@ GrammifyAI uses **your own LLM API key** (or a local model via **Ollama** / **LM
 
 ## Features
 
-* **System-Wide Shortcut:** Trigger corrections in any native or web app with `⌘ + U` (customizable in Settings).
+* **Works Everywhere (Native, Web, Electron & Canvas Apps):** Uses a two-tier Accessibility API + smart clipboard fallback to work seamlessly across native macOS apps, browsers, Electron apps (**VS Code**, **Slack**, **Notion**), and canvas-rendered editors like **Google Docs**.
 * **Word-Level Visual Diff & Error Badges:** Inspect exact additions (green) and deletions (red strikethrough) alongside classified error badges (hover any badge to see the exact `"original" → "corrected"` fragment).
 * **One-Key Direct Replace (`↩`):** Press `↩` (Enter) in the suggestion popup to immediately replace the selected text in the source application, or `⎋` (Escape) to dismiss. Suggestions are also automatically copied to your clipboard.
 * **Floating Popup Near Selection:** Optionally anchor a compact, auto-sized suggestion popup right next to your selected text.
@@ -107,10 +107,9 @@ You can use any OpenAI-compatible `/chat/completions` endpoint in **Settings**:
 5.  *(Optional)* Open **Statistics** from the menu bar to track your writing accuracy and most common error categories across languages over time, or export your history to CSV.
 
 ### Known Successful Use Cases
-Used daily in *Slack*, *Chrome*, *Notion*, *Messenger*, *Mail*, *Notes*, and standard web forms.
+Used daily in *Google Docs*, *VS Code*, *Slack*, *Chrome*, *Notion*, *Messenger*, *Mail*, *Notes*, and standard web forms.
 
 ### Known Limitations
-* Does not currently work in *Google Docs* (Google Docs uses a custom canvas renderer instead of native macOS Accessibility text attributes).
 * Since it uses an LLM, suggestions for sensitive or nuanced topics may occasionally alter the original meaning.
 
 ### Screen Recording

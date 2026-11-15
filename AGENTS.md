@@ -8,7 +8,7 @@ GrammifyAI is a minimalist macOS menu bar application that provides LLM-powered 
 
 **Key Features:**
 - Global keyboard shortcut (`⌘ + U` by default) to check selected text
-- Works with any web or native macOS application (except Google Docs)
+- Works with any web, Electron, canvas, or native macOS application (including Google Docs and VS Code)
 - OpenAI-compatible API integration (configurable endpoint and model)
 - Diff-based correction display with color-coded changes
 - Automatic clipboard copying of corrected text
