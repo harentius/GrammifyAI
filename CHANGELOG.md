@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.15.0
+
+* Support text selection and in-place replacement in Electron, web, and canvas applications (such as VS Code and Google Docs) using a two-tier Accessibility API + ⌘ + C clipboard fallback with automatic clipboard restoration
+* Detect VS Code empty-selection copies so triggering the shortcut without selected text reports an error instead of copying the entire line
+* Improve suggestion window dismissal and focus restoration timing when applying or dismissing corrections
+
 ## 0.14.0
 
 * Add Apply (↩) action to replace selected text directly in the source application (via Accessibility API with automatic ⌘ + V fallback)
