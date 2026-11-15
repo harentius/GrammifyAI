@@ -8,7 +8,7 @@ GrammifyAI is a minimalist macOS menu bar application that provides LLM-powered 
 
 **Key Features:**
 - Global keyboard shortcut (`⌘ + U` by default) to check selected text
-- Works with any web or native macOS application (except Google Docs)
+- Works with any web, Electron, canvas, or native macOS application (including Google Docs and VS Code)
 - OpenAI-compatible API integration (configurable endpoint and model)
 - Diff-based correction display with color-coded changes
 - Automatic clipboard copying of corrected text
@@ -45,9 +45,9 @@ xcodebuild -scheme GrammifyAI -configuration Release archive -archivePath ./buil
 - Manages keyboard shortcut callback via KeyboardShortcuts library
 - Coordinates UI state (settings, suggestions, errors)
 
-**SelectionManager.swift** - Text selection and replacement via Accessibility API
-- Uses `AXUIElementCreateSystemWide()` to access focused UI elements and captures `SelectionTarget` (owning `NSRunningApplication` and focused `AXUIElement`)
-- Reads `kAXSelectedTextAttribute` from focused element
+**SelectionManager.swift** - Text selection and replacement via Accessibility API and Clipboard fallback
+- Uses `AXUIElementCreateSystemWide()` (with fallback to `AXUIElementCreateApplication(pid)` and `AXManualAccessibility` enabled for Electron/Chromium apps) to access focused UI elements and captures `SelectionTarget` (owning `NSRunningApplication` and focused `AXUIElement`)
+- Reads selected text using a two-tier strategy: Tier 1 queries `kAXSelectedTextAttribute` (and `AXSelectedTextMarkerRange`), and Tier 2 falls back to a synthesized `⌘ + C` copy with clipboard snapshot/restoration (and `vscode-editor-data` `isFromEmptySelection` detection for VS Code)
 - Replaces selected text in the source app using a two-tier strategy: direct `AXUIElementSetAttributeValue` on native text controls (verified via `kAXValueAttribute`) with fallback to re-activating the source app and posting `⌘ + V`
 - Returns `Result` type with success/error state
 

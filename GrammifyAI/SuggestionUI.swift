@@ -27,15 +27,17 @@ struct SuggestionUI: View {
     private func handleApply() {
         guard canApplySuggestion else { return }
         hasBecomeKeyForCurrentRequest = false
-        appState.applySuggestion()
+        NSApplication.shared.keyWindow?.orderOut(nil)
         dismiss()
+        appState.applySuggestion()
     }
 
     private func handleDismiss() {
         currentTask?.cancel()
         hasBecomeKeyForCurrentRequest = false
-        appState.dismissSuggestion(reactivateSourceApp: true)
+        NSApplication.shared.keyWindow?.orderOut(nil)
         dismiss()
+        appState.dismissSuggestion(reactivateSourceApp: true)
     }
 
     private var resizeStateHash: Int {
@@ -535,7 +537,7 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
         }
 
         func applyPositionIfNeeded() {
-            guard let window = self.window else { return }
+            guard isShowing, let window = self.window else { return }
 
             let tokenChanged = (lastAppliedToken != positionToken)
             let resizeChanged = (lastAppliedResizeHash != resizeStateHash)
@@ -554,8 +556,8 @@ private struct SuggestionWindowPositioner: NSViewRepresentable {
                 NSApplication.shared.activate(ignoringOtherApps: true)
                 window.makeKeyAndOrderFront(nil)
             }
-            DispatchQueue.main.async { [weak window] in
-                guard let window = window else { return }
+            DispatchQueue.main.async { [weak self, weak window] in
+                guard let self = self, self.isShowing, let window = window else { return }
                 Self.position(window: window, near: rect, centerIfNil: tokenChanged)
                 if shouldActivate {
                     NSApplication.shared.activate(ignoringOtherApps: true)
